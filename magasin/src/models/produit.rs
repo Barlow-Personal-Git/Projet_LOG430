@@ -1,7 +1,9 @@
 use diesel::{Queryable, Insertable};
+use rocket::serde::{Serialize, Deserialize};
 use crate::schema::produits;
 
-#[derive(Debug, Queryable, Clone)]
+#[derive(Debug, Queryable, Clone, Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
 pub struct Produit {
     pub id_produit: i32,
     pub nom: String,

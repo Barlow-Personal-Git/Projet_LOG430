@@ -1,10 +1,12 @@
 use chrono::NaiveDateTime;
 use diesel::{Queryable, Insertable, Associations};
+use rocket::serde::{Serialize, Deserialize};
 use crate::models::client::Client;
 use crate::schema::transactions;
 
-#[derive(Debug, Queryable, Associations)]
+#[derive(Debug, Queryable, Associations, Serialize, Deserialize)]
 #[diesel(belongs_to(Client, foreign_key = id_client))]
+#[serde(crate = "rocket::serde")]
 pub struct Transaction {
     pub id_transaction: i32,
     pub id_client: i32,

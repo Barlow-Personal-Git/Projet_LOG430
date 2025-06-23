@@ -1,6 +1,5 @@
 use crate::views::menu_view;
-use crate::controllers::{recherche_controller, achat_controller, consulter_controller};
-// use crate::controllers::{recherche_controller, achat_controller, retour_controller, consulter_controller};
+use crate::controllers::{recherche_controller, achat_controller, retour_controller, consulter_controller};
 
 pub fn menu_principal() {
     loop {
@@ -16,7 +15,7 @@ pub fn menu_principal() {
         match choix.as_str() {
             "1" => recherche_controller::menu_recherche(),
             "2" => achat_controller::menu_achat(),
-            // "3" => retour_controller::menu_retour(),
+            "3" => retour_controller::menu_retour().expect("Erreur de connecter sur la table de transaction"),
             "4" => consulter_controller::consulter_liste_produit(),
             "5" => break,
             _ => println!("Choix invalide."),

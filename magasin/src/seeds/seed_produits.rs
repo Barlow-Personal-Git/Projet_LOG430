@@ -1,6 +1,6 @@
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
-use crate::models::produit::{Produit, NouveauProduit};
+use crate::models::produit::NouveauProduit;
 use crate::schema::produits;
 
 pub fn seed_produits(conn: &mut PgConnection) -> QueryResult<()> {

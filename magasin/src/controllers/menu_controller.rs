@@ -1,8 +1,5 @@
 use crate::views::menu_view;
-use crate::controllers::recherche_controller;
-use diesel::pg::PgConnection;
-use diesel::prelude::*;
-use crate::establish_connection;
+use crate::controllers::{recherche_controller, achat_controller, consulter_controller};
 // use crate::controllers::{recherche_controller, achat_controller, retour_controller, consulter_controller};
 
 pub fn menu_principal() {
@@ -17,13 +14,10 @@ pub fn menu_principal() {
         let choix = menu_view::demander_choix();
 
         match choix.as_str() {
-            "1" => {
-                let mut conn = establish_connection();
-                recherche_controller::menu_recherche(&mut conn);
-            },
-            // "2" => achat_controller::menu_achat(),
+            "1" => recherche_controller::menu_recherche(),
+            "2" => achat_controller::menu_achat(),
             // "3" => retour_controller::menu_retour(),
-            // "4" => consulter_controller::consulter_liste_produit(),
+            "4" => consulter_controller::consulter_liste_produit(),
             "5" => break,
             _ => println!("Choix invalide."),
         }

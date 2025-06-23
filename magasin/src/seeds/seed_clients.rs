@@ -1,6 +1,6 @@
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
-use crate::models::client::{Client, NouveauClient};
+use crate::models::client::NouveauClient;
 use crate::schema::clients;
 
 pub fn seed_clients(conn: &mut PgConnection) -> QueryResult<()> {

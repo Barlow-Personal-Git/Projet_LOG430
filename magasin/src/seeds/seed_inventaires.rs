@@ -1,6 +1,6 @@
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
-use crate::models::inventaire::{NouveauInventaire, Inventaire};
+use crate::models::inventaire::NouveauInventaire;
 use crate::models::produit::Produit;
 use crate::schema::produits;
 use crate::schema::inventaires;

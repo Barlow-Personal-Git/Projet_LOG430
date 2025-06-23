@@ -1,9 +1,13 @@
 use diesel::prelude::*;
+use crate::db::get_conn;
 use crate::models::{produit::Produit, inventaire::Inventaire};
 use crate::views::recherche_view;
 use crate::schema::{produits::dsl as p_dsl, inventaires::dsl as i_dsl};
 
-pub fn menu_recherche(conn: &mut PgConnection) {
+pub fn menu_recherche() {
+
+    let mut conn = get_conn();
+
     loop {
         recherche_view::afficher_choix();
         recherche_view::afficher_identifiant();
@@ -14,9 +18,9 @@ pub fn menu_recherche(conn: &mut PgConnection) {
         let choix = recherche_view::demander_choix();
 
         match choix.as_str() {
-            "1" => menu_recherche_id(conn),
-            "2" => menu_recherche_nom(conn),
-            "3" => menu_recherche_categorie(conn),
+            "1" => menu_recherche_id(&mut conn),
+            "2" => menu_recherche_nom(&mut conn),
+            "3" => menu_recherche_categorie(&mut conn),
             "4" => break,
             _ => println!("Choix invalide, veuillez réessayer."),
         }

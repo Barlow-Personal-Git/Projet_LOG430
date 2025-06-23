@@ -1,13 +1,19 @@
 use diesel::pg::PgConnection;
-use diesel::prelude::*;
+use diesel::r2d2::{ConnectionManager, Pool};
 use std::env;
+use once_cell::sync::Lazy;
 
-pub fn establish_connection() -> PgConnection {
+type PgPool = Pool<ConnectionManager<PgConnection>>;
+
+pub static DB_POOL: Lazy<PgPool> = Lazy::new(|| {
     dotenvy::dotenv().ok();
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL doit être défini");
+    let manager = ConnectionManager::<PgConnection>::new(database_url);
+    Pool::builder()
+        .build(manager)
+        .expect("Erreur lors de la création du pool de connexion")
+});
 
-    let database_url = env::var("DATABASE_URL")
-        .expect("L'environnement n'est pas configuré");
-
-    PgConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Erreur de connection : {}", database_url))
+pub fn get_conn() -> diesel::r2d2::PooledConnection<ConnectionManager<PgConnection>> {
+    DB_POOL.get().expect("Impossible d'obtenir une connexion du pool")
 }

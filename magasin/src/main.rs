@@ -9,8 +9,7 @@ mod seeds;
 use controllers::login_controller;
 use seeds::{seed_clients, seed_inventaires, seed_produits};
 use std::env;
-use db::establish_connection;
-use diesel::pg::PgConnection;
+use db::get_conn;
 
 fn main() {
 
@@ -19,7 +18,7 @@ fn main() {
     if args.len() > 1 && args[1] == "seed" {
         println!("🔧 Exécution des seeds...");
 
-        let mut conn: PgConnection = establish_connection();
+        let mut conn = get_conn();
 
         seed_clients(&mut conn).expect("Erreur lors du seed clients");
         seed_produits(&mut conn).expect("Erreur lors du seed produits");

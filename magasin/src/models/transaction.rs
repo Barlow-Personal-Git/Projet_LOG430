@@ -18,4 +18,10 @@ pub struct Transaction {
 pub struct NouvelleTransaction {
     pub id_client: i32,
     pub total: f32,
+    
+    #[diesel(sql_type = Timestamp)]
+    pub created_date: NaiveDateTime,
+
+    #[diesel(sql_type = Timestamp)]
+    pub updated_date: NaiveDateTime,
 }

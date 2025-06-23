@@ -1,8 +1,6 @@
-use std::env;
 use crate::session::client_session::CLIENT_SESSION;
 use crate::models::client::{Client, NouveauClient};
-use crate::models::inventaire::Inventaire;
-use crate::db::establish_connection;
+use crate::db::get_conn;
 use crate::views::login_view;
 use crate::controllers::menu_controller::menu_principal;
 
@@ -13,7 +11,7 @@ use diesel::ExpressionMethods;
 pub fn login() {
     login_view::afficher_bienvenue_magasin();
 
-    let mut conn = establish_connection();
+    let mut conn = get_conn();
 
     loop {
         let nom_utilisateur  = login_view::demander_nom();

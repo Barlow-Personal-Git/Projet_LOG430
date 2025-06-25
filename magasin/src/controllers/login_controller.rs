@@ -3,10 +3,13 @@ use crate::models::client::{Client, NouveauClient};
 use crate::db::get_conn;
 use crate::views::login_view;
 use crate::controllers::menu_controller::menu_principal;
+use crate::controllers::synchroniser_controller::sync_data;
 
 use diesel::prelude::*;
 use diesel::RunQueryDsl;
 use diesel::ExpressionMethods;
+
+use tokio::runtime::Runtime;
 
 pub fn login() {
     login_view::afficher_bienvenue_magasin();
@@ -57,6 +60,13 @@ pub fn login() {
             session.set_client(client);
         }
 
+        let rt = Runtime::new().unwrap();
+        rt.block_on(async {
+            if let Err(e) = sync_data().await {
+                eprintln!("Erreur synchronisation : {}", e);
+            }
+        });
+        
         menu_principal();
 
         break;

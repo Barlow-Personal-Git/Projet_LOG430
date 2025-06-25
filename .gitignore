@@ -4,6 +4,11 @@
 /magasin/release/
 /magasin/Cargo.lock
 
+/centre_logistique/target/
+/centre_logistique/debug/
+/centre_logistique/release/
+/centre_logistique/Cargo.lock
+
 # Rust backup files
 **/*.rs.bk
 

@@ -27,3 +27,9 @@ pub struct NouvelleTransaction {
     #[diesel(sql_type = Timestamp)]
     pub updated_date: NaiveDateTime,
 }
+
+#[derive(Queryable, Debug, Serialize)]
+pub struct SommeTransactionParMagasin {
+    pub  id_magasin: i32,
+    pub  total: f32,
+}

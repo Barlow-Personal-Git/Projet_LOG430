@@ -29,22 +29,15 @@ pub struct NouvelleTransactionDTO {
 pub struct TransactionDTO<'a> {
     pub magasin: &'a str,
     pub transactions: Vec<NouvelleTransactionDTO>,
+    pub transaction_produits: Vec<NouveauTransactionProduitDTO>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct NouveauTransactionProduitDTO {
-    pub id_transaction: i32,
     pub id_produit: i32,
     pub nbr: i32,
     pub total: f32,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-#[serde(crate = "rocket::serde")]
-pub struct TransactionProduitDTO<'a> {
-    pub magasin: &'a str,
-    pub transaction_produits: Vec<NouveauTransactionProduitDTO>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

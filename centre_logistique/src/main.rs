@@ -1,4 +1,4 @@
-// mod controllers;
+mod controllers;
 mod db;
 mod dto;
 mod models;

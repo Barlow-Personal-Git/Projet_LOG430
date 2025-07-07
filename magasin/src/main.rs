@@ -6,16 +6,13 @@ mod models;
 mod schema;
 mod session;
 mod seeds;
-mod routes;
 
-use crate::routes::api::routes_api;
 use controllers::login_controller;
 use seeds::{seed_clients, seed_inventaires, seed_produits};
 use std::env;
 use db::get_conn;
 
-#[rocket::main]
-async fn main() -> Result<(), rocket::Error> {
+fn main(){
 
     let args: Vec<String> = env::args().collect();
 
@@ -27,23 +24,15 @@ async fn main() -> Result<(), rocket::Error> {
                 seed_produits(&mut conn).unwrap();
                 seed_inventaires(&mut conn).unwrap();
                 println!("Données insérées !");
-                Ok(())
             }
             "login" => {
                 controllers::login_controller::login();
-                Ok(())
             }
             _ => {
                 println!("Commande inconnue. Utilise `seed` ou `login`.");
-                Ok(())
             }
         }
     } else {
-        let _rocket = rocket::build()
-            .mount("/api", routes_api())
-            .launch()
-            .await?;
-
-        Ok(())
+        println!("Commande inconnue. Utilise `seed` ou `login`.");
     }
 }

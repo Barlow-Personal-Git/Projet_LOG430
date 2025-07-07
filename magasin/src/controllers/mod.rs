@@ -5,6 +5,3 @@ pub mod menu_controller;
 pub mod recherche_controller;
 pub mod retour_controller;
 pub mod synchroniser_controller;
-pub mod inventaire_controller;
-pub mod transaction_controller;
-pub mod transaction_produit_controller;

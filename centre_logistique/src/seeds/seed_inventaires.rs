@@ -6,7 +6,6 @@ use crate::models::magasin::Magasin;
 use crate::schema::inventaires;
 use crate::schema::magasins::dsl::{magasins, nom as nom_magasin};
 use crate::schema::produits::dsl::produits;
-use diesel::associations::HasTable;
 
 pub fn seed_inventaires(conn: &mut PgConnection) -> QueryResult<()> {
     let produits_list: Vec<Produit> = produits.load(conn)?;

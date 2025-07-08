@@ -5,6 +5,7 @@ use crate::models::{
     transaction_produit::NouveauTransactionProduit,
 };
 use diesel::prelude::*;
+use crate::controllers::synchroniser_controller::sync_data;
 use crate::schema::produits::dsl::*;
 use crate::schema::inventaires::dsl::{inventaires, id_produit as inv_id_produit, nbr as inv_nbr};
 use crate::schema::transactions::dsl::{transactions, id_transaction as trans_id_transaction, total as trans_total};
@@ -13,6 +14,8 @@ use crate::views::achat_view;
 use crate::session::client_session::CLIENT_SESSION;
 use crate::db::get_conn;
 use chrono::Utc;
+
+use tokio::runtime::Runtime;
 
 pub fn menu_achat() {
     let mut conn = get_conn();
@@ -132,6 +135,12 @@ fn consulter_produit(conn: &mut PgConnection) {
         match choix.as_str() {
             "1" => {
                 confirmer_vente(conn);
+                let rt = Runtime::new().unwrap();
+                rt.block_on(async {
+                    if let Err(e) = sync_data().await {
+                        eprintln!("Erreur synchronisation : {}", e);
+                    }
+                });
                 break;
             }
             "2" => {

@@ -1,5 +1,4 @@
-use rocket::serde::{Deserialize, Serialize};
-use crate::models::{Transaction, TransactionProduit, Message};
+use rocket::serde::{Deserialize, Serialize };
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -29,16 +28,8 @@ pub struct NouvelleTransactionDTO {
 pub struct TransactionDTO<'a> {
     pub magasin: &'a str,
     pub transactions: Vec<NouvelleTransactionDTO>,
-    pub transaction_produits: Vec<NouveauTransactionProduitDTO>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
-#[serde(crate = "rocket::serde")]
-pub struct NouveauTransactionProduitDTO {
-    pub id_produit: i32,
-    pub nbr: i32,
-    pub total: f32,
-}
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -52,4 +43,27 @@ pub struct NouveauMessageDTO<'a> {
 pub struct MessageDTO<'a> {
     pub magasin: &'a str,
     pub messages: Vec<NouveauMessageDTO<'a>>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct TransactionProduitsDTO {
+    pub magasin: String,
+    pub transaction_produits: Vec<NouvelleTransactionProduitsDTO>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct NouvelleTransactionProduitsDTO {
+    pub id_transaction: i32,
+    pub produits: Vec<NouvelleProduitsDTO>,
+    pub total: f32,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(crate = "rocket::serde")]
+pub struct NouvelleProduitsDTO {
+    pub nom: String,
+    pub prix: f32,
+    pub nbr: i32
 }

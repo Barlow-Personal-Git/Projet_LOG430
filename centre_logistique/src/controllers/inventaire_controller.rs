@@ -11,7 +11,6 @@ use crate::schema::inventaires::dsl::{
     inventaires,
     id_produit as inv_id_produit,
     id_magasin as inv_id_magasin,
-    category as inv_category,
     nbr as inv_nbr,
 };
 use crate::schema::magasins::dsl::{magasins, nom};

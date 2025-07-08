@@ -2,12 +2,12 @@ mod controllers;
 mod db;
 mod dto;
 mod views;
+mod mappers;
 mod models;
 mod schema;
 mod session;
 mod seeds;
 
-use controllers::login_controller;
 use seeds::{seed_clients, seed_inventaires, seed_produits};
 use std::env;
 use db::get_conn;

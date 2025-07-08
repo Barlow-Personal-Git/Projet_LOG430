@@ -4,7 +4,7 @@ use rocket::serde::{Serialize, Deserialize};
 use crate::models::client::Client;
 use crate::schema::transactions;
 
-#[derive(Debug, Queryable, Associations, Serialize, Deserialize)]
+#[derive(Debug, Clone, Queryable, Associations, Serialize, Deserialize)]
 #[diesel(belongs_to(Client, foreign_key = id_client))]
 #[serde(crate = "rocket::serde")]
 pub struct Transaction {

@@ -5,18 +5,14 @@ use diesel::dsl::sum;
 use diesel::prelude::*;
 use diesel::upsert::excluded;
 use crate::db::get_conn;
-use crate::models::{Transaction, TransactionProduit, Magasin};
+use crate::models::{Transaction, Magasin};
 use crate::dto::TransactionDTO;
 use crate::models::transaction::{NouvelleTransaction, SommeTransactionParMagasin};
-use crate::models::transaction_produit::NouveauTransactionProduit;
 use crate::schema::transactions::dsl::{
     transactions,
     id_magasin as trans_id_magasin,
-    total,
-    updated_date,
-};
-use crate::schema::transaction_produits::dsl::{
-    transaction_produits,
+    total as trans_total,
+    created_date as trans_created_date
 };
 use crate::schema::magasins::dsl::{magasins, nom};
 
@@ -48,43 +44,17 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
             updated_date: tr.updated_date
     }).collect();
 
-    let inserted_transactions: Vec<Transaction> = diesel::insert_into(transactions)
+    diesel::insert_into(transactions)
         .values(&new_tr)
-        .on_conflict(trans_id_magasin)
+        .on_conflict((trans_id_magasin, trans_created_date))
         .do_update()
-        .set((
-            total.eq(excluded(total)),
-            updated_date.eq(excluded(updated_date)),
-        ))
-        .get_results(&mut conn)
-        .map_err(|e| format!("Erreur insertion: {}", e))?;
-    
-    let mut new_trp = Vec::new();
-    for (idx, trp) in data.transaction_produits.iter().enumerate() {
-        new_trp.push(NouveauTransactionProduit {
-            id_transaction: inserted_transactions[idx].id_transaction,
-            id_produit: trp.id_produit,
-            nbr: trp.nbr,
-            total: trp.total,
-        });
-    }
-
-    diesel::insert_into(transaction_produits)
-        .values(&new_trp)
+        .set(
+            trans_total.eq(excluded(trans_total))
+        )
         .execute(&mut conn)
         .map_err(|e| format!("Erreur insertion transaction_produits: {}", e))?;
 
     Ok("Transaction insérée".to_string())
-}
-
-#[get("/transaction_produits")]
-pub async fn get_transaction_produits() -> Result<Json<Vec<TransactionProduit>>, String> {
-    let mut conn = get_conn();
-
-    transaction_produits
-        .load::<TransactionProduit>(&mut conn)
-        .map(|inv| Json(inv))
-        .map_err(|e| format!("Erreur DB : {}", e))
 }
 
 #[get("/sommes")]
@@ -93,7 +63,7 @@ pub async fn get_sommes() -> Result<Json<Vec<SommeTransactionParMagasin>>, Strin
   
   let resultats = transactions
     .group_by(trans_id_magasin)
-    .select((trans_id_magasin, sum(total)))
+    .select((trans_id_magasin, sum(trans_total)))
     .load::<(i32, Option<f32>)>(&mut conn)
     .map_err(|e| format!("Erreur DB : {}", e))?;
 

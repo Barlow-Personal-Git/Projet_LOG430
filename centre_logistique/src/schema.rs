@@ -39,8 +39,8 @@ diesel::table! {
     transaction_produits (id_transaction_produit) {
         id_transaction_produit -> Int4,
         id_transaction -> Int4,
-        id_produit -> Int4,
-        nbr -> Int4,
+        id_magasin -> Int4,
+        produits -> Jsonb,
         total -> Float4,
     }
 }
@@ -59,8 +59,7 @@ diesel::joinable!(inventaires -> magasins (id_magasin));
 diesel::joinable!(inventaires -> produits (id_produit));
 diesel::joinable!(messages -> magasins (id_magasin));
 diesel::joinable!(messages -> produits (id_produit));
-diesel::joinable!(transaction_produits -> produits (id_produit));
-diesel::joinable!(transaction_produits -> transactions (id_transaction));
+diesel::joinable!(transaction_produits -> magasins (id_magasin));
 diesel::joinable!(transactions -> magasins (id_magasin));
 
 diesel::allow_tables_to_appear_in_same_query!(

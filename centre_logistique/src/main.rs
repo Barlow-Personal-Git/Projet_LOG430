@@ -6,7 +6,6 @@ mod schema;
 mod routes;
 mod seeds;
 
-use rocket::routes;
 use routes::routes;
 use seeds::{seed_inventaires, seed_magasins, seed_produits};
 use std::env;

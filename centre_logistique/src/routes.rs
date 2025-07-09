@@ -16,6 +16,10 @@ pub fn routes() -> Vec<Route> {
         post_transaction_produits,
         get_messages,
         post_message,
-        get_sommes
+        get_produits_vendus,
+        get_ventes_magasin,
+        get_inventaires_faible,
+        get_inventaires_surplus,
+        get_tendances_hebdomadaires
     ]
 }

@@ -1,4 +1,6 @@
 use chrono::NaiveDateTime;
+use diesel::prelude::*;
+use diesel::sql_types::{Text, Nullable, Float};
 use diesel::{Queryable, Insertable, Associations};
 use rocket::serde::{Serialize, Deserialize};
 use crate::models::magasin::Magasin;
@@ -30,6 +32,18 @@ pub struct NouvelleTransaction {
 
 #[derive(Queryable, Debug, Serialize)]
 pub struct SommeTransactionParMagasin {
-    pub  id_magasin: i32,
-    pub  total: f32,
+    pub magasin: String,
+    pub total: f32,
+}
+
+#[derive(QueryableByName, Debug)]
+pub struct TendancesHebdoSQL {
+    #[diesel(sql_type = Text)]
+    pub nom: String,
+
+    #[diesel(sql_type = Text)]
+    pub semaine: String,
+
+    #[diesel(sql_type = Nullable<Float>)]
+    pub total: Option<f32>,
 }

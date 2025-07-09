@@ -30,7 +30,6 @@ pub struct TransactionDTO<'a> {
     pub transactions: Vec<NouvelleTransactionDTO>,
 }
 
-
 #[derive(Debug, Clone, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct NouveauMessageDTO<'a> {
@@ -65,5 +64,29 @@ pub struct NouvelleTransactionProduitsDTO {
 pub struct NouvelleProduitsDTO {
     pub nom: String,
     pub prix: f32,
-    pub nbr: i32
+    pub nbr: i32,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(crate = "rocket::serde")]
+pub struct InventairesFaibleDTO {
+    pub nom: String,
+    pub produit_nom: String,
+    pub inv_nbr: i32,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(crate = "rocket::serde")]
+pub struct InventairesSurplusDTO {
+    pub nom: String,
+    pub produit_nom: String,
+    pub inv_nbr: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct TendancesHebdoDTO {
+    pub magasin: String,
+    pub semaine: String,
+    pub total: f32,
 }

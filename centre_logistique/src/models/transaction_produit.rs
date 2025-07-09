@@ -23,3 +23,9 @@ pub struct NouveauTransactionProduit {
     pub produits: Value,
     pub total: f32,
 }
+
+#[derive(Queryable, Debug, Serialize)]
+pub struct SommeTransactionProduitParMagasin {
+    pub magasin: String,
+    pub total: f32,
+}

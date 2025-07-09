@@ -1,21 +1,22 @@
 use rocket::serde::json::Json;
 use rocket::get;
 use rocket::post;
-use diesel::dsl::sum;
+use diesel::dsl::{sum, sql};
+use diesel::sql_query;
+use diesel::sql_types::{Text, Float};
 use diesel::prelude::*;
 use diesel::upsert::excluded;
 use crate::db::get_conn;
 use crate::models::{Transaction, Magasin};
-use crate::dto::TransactionDTO;
-use crate::models::transaction::{NouvelleTransaction, SommeTransactionParMagasin};
+use crate::dto::{TransactionDTO, TendancesHebdoDTO};
+use crate::models::transaction::{NouvelleTransaction, SommeTransactionParMagasin, TendancesHebdoSQL};
 use crate::schema::transactions::dsl::{
     transactions,
     id_magasin as trans_id_magasin,
     total as trans_total,
     created_date as trans_created_date
 };
-use crate::schema::magasins::dsl::{magasins, nom};
-
+use crate::schema::magasins::dsl::{magasins, nom, id_magasin};
 
 #[get("/transactions")]
 pub async fn get_transactions() -> Result<Json<Vec<Transaction>>, String> {
@@ -57,23 +58,53 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
     Ok("Transaction insérée".to_string())
 }
 
-#[get("/sommes")]
-pub async fn get_sommes() -> Result<Json<Vec<SommeTransactionParMagasin>>, String> {
-  let mut conn = get_conn();
+#[get("/produits_vendus")]
+pub async fn get_produits_vendus() -> Result<Json<Vec<SommeTransactionParMagasin>>, String> {
+    let mut conn = get_conn();
   
-  let resultats = transactions
-    .group_by(trans_id_magasin)
-    .select((trans_id_magasin, sum(trans_total)))
-    .load::<(i32, Option<f32>)>(&mut conn)
-    .map_err(|e| format!("Erreur DB : {}", e))?;
+    let resultats = transactions
+        .inner_join(magasins.on(id_magasin.eq(trans_id_magasin)))
+        .group_by(nom)
+        .select((nom, sum(trans_total)))
+        .load::<(String, Option<f32>)>(&mut conn)
+        .map_err(|e| format!("Erreur DB : {}", e))?;
 
-  let sommes: Vec<SommeTransactionParMagasin> = resultats
-    .into_iter()
-    .map(|(id_magasin, total_opt)| SommeTransactionParMagasin {
-        id_magasin,
-        total: total_opt.unwrap_or(0.0),
+    let sommes: Vec<SommeTransactionParMagasin> = resultats
+        .into_iter()
+        .map(|(magasin_nom, magasin_total)| SommeTransactionParMagasin {
+            magasin: magasin_nom,
+            total: magasin_total.unwrap_or(0.0),
     })
     .collect();
 
     Ok(Json(sommes))
+}
+
+#[get("/tendances_hebdomadaires")]
+pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>>, String> {
+    let mut conn = get_conn();
+    
+    let semaine = sql::<Text>("TO_CHAR(created_date, 'IYYY-IW')");
+
+    let query = "
+        SELECT magasins.nom, TO_CHAR(transactions.created_date, 'IYYY-IW') AS semaine, SUM(transactions.total) AS total
+        FROM transactions
+        JOIN magasins ON transactions.id_magasin = magasins.id_magasin
+        GROUP BY magasins.nom, semaine
+        ORDER BY magasins.nom, semaine
+    ";
+    let resultats = sql_query(query)
+        .load::<TendancesHebdoSQL>(&mut conn)
+        .map_err(|e| format!("Erreur DB : {}", e))?;
+
+    let tendances: Vec<TendancesHebdoDTO> = resultats
+        .into_iter()
+        .map(|res_query| TendancesHebdoDTO {
+            magasin: res_query.nom,
+            semaine: res_query.semaine,
+            total: res_query.total.unwrap_or(0.0),
+    })
+    .collect();
+
+    Ok(Json(tendances))
 }

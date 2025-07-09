@@ -1,4 +1,5 @@
 use rocket::serde::{Deserialize, Serialize };
+use chrono::NaiveDateTime;
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -19,8 +20,8 @@ pub struct InventaireDTO<'a> {
 #[serde(crate = "rocket::serde")]
 pub struct NouvelleTransactionDTO {
     pub total: f32,
-    pub created_date: chrono::NaiveDateTime,
-    pub updated_date: chrono::NaiveDateTime,
+    pub created_date: NaiveDateTime,
+    pub updated_date: NaiveDateTime,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -101,4 +102,13 @@ pub struct ProduitVenduDTO {
 pub struct InventaireRestantDTO {
     pub nom_produit: String,
     pub nbr_inventaire: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct AlerteReapprovisionnementDTO {
+    pub magasin: String,
+    pub produit: String,
+    pub nbr: i32,
+    pub status: String,
+    pub date_creation: NaiveDateTime,
 }

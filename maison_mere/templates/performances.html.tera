@@ -1,0 +1,48 @@
+{% extends "base" %}
+
+{% block title %}Performances{% endblock title %}
+
+{% block header %}
+  Tableau de performances
+{% endblock header %}
+
+
+{% block content %}
+
+<h2>Ventes par magasin</h2>
+<ul>
+{% for vente in ventes %}
+    <li>{{ vente.magasin }} : {{ vente.total }}</li>
+{% else %}
+    <li>Aucune vente enregistrée.</li>
+{% endfor %}
+</ul>
+
+<h2>Alertes de réapprovisionnement</h2>
+<ul>
+{% for alerte in alertes %}
+    <li>{{ alerte.magasin }} - {{ alerte.produit }} : {{ alerte.nbr }} ({{ alerte.status }}) - {{ alerte.date_creation }}</li>
+{% else %}
+    <li>Aucune alerte de réapprovisionnement.</li>
+{% endfor %}
+</ul>
+
+<h2>Inventaires en surplus</h2>
+<ul>
+{% for surplus_item in surplus %}
+    <li>{{ surplus_item.nom }} - {{ surplus_item.produit_nom }} : {{ surplus_item.inv_nbr }}</li>
+{% else %}
+    <li>Aucun inventaire en surplus.</li>
+{% endfor %}
+</ul>
+
+<h2>Tendances hebdomadaires</h2>
+<ul>
+{% for tendance in tendances %}
+    <li>{{ tendance.magasin }} - Semaine {{ tendance.semaine }} : {{ tendance.total }}</li>
+{% else %}
+    <li>Aucune tendance hebdomadaire disponible.</li>
+{% endfor %}
+</ul>
+
+{% endblock content %}

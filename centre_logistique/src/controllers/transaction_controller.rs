@@ -61,7 +61,7 @@ pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>
     let mut conn = get_conn();
 
     let query = "
-        SELECT magasins.nom, TO_CHAR(transactions.created_date, 'IYYY-IW') AS semaine, SUM(transactions.total) AS total
+        SELECT magasins.nom, TO_CHAR(date_trunc('week', created_date), 'YYYY-MM-DD') AS semaine, SUM(transactions.total) AS total
         FROM transactions
         JOIN magasins ON transactions.id_magasin = magasins.id_magasin
         GROUP BY magasins.nom, semaine

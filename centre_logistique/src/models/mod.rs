@@ -1,8 +1,9 @@
 pub mod magasin;
 pub mod message;
-pub mod produit;
-pub mod transaction;
 pub mod inventaire;
+pub mod produit;
+pub mod reapprovisionnement;
+pub mod transaction;
 pub mod transaction_produit;
 
 pub use inventaire::Inventaire;

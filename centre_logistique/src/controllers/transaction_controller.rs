@@ -3,7 +3,7 @@ use rocket::get;
 use rocket::post;
 use diesel::dsl::{sum, sql};
 use diesel::sql_query;
-use diesel::sql_types::{Text, Float};
+use diesel::sql_types::Text;
 use diesel::prelude::*;
 use diesel::upsert::excluded;
 use crate::db::get_conn;
@@ -84,7 +84,7 @@ pub async fn get_produits_vendus() -> Result<Json<Vec<SommeTransactionParMagasin
 pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>>, String> {
     let mut conn = get_conn();
     
-    let semaine = sql::<Text>("TO_CHAR(created_date, 'IYYY-IW')");
+    let _semaine = sql::<Text>("TO_CHAR(created_date, 'IYYY-IW')");
 
     let query = "
         SELECT magasins.nom, TO_CHAR(transactions.created_date, 'IYYY-IW') AS semaine, SUM(transactions.total) AS total

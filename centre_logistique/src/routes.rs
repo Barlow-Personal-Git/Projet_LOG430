@@ -4,6 +4,7 @@ use crate::controllers::{
     transaction_controller::*,
     transaction_produit_controller::*,
     message_controller::*,
+    reapprovisionnement_controller::*
 };
 
 pub fn routes() -> Vec<Route> {
@@ -20,6 +21,8 @@ pub fn routes() -> Vec<Route> {
         get_ventes_magasin,
         get_inventaires_faible,
         get_inventaires_surplus,
-        get_tendances_hebdomadaires
+        get_tendances_hebdomadaires,
+        get_reapprovisionnements,
+        post_reapprovisionnements
     ]
 }

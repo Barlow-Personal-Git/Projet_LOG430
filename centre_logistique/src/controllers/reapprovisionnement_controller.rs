@@ -1,6 +1,5 @@
 use rocket::serde::json::Json;
-use rocket::{get, post};
-use rocket::http::Status;
+use rocket::{get, post, put, http::Status};
 use diesel::prelude::*;
 use crate::db::get_conn;
 use crate::models::reapprovisionnement::{Reapprovisionnement, NouveauReapprovisionnement};
@@ -28,4 +27,18 @@ pub async fn post_reapprovisionnements(data: Json<NouveauReapprovisionnement>) -
         .get_result::<Reapprovisionnement>(&mut conn)
         .map(|reappro| (Status::Created, Json(reappro)))
         .map_err(|e| format!("Erreur insertion: {}", e))
+}
+
+#[put("/reapprovisionnements/<id>", data = "<data>")]
+pub async fn put_reapprovisionnement(id: i32, data: Json<NouveauReapprovisionnement>) -> Result<Json<Reapprovisionnement>, String> {
+    let mut conn = get_conn();
+    let update_data = data.into_inner();
+
+    diesel::update(reapprovisionnements.filter(id_reapprovisionnement.eq(id)))
+        .set((
+            status.eq(update_data.status),
+        ))
+        .get_result::<Reapprovisionnement>(&mut conn)
+        .map(Json)
+        .map_err(|e| format!("Erreur lors de la mise à jour : {}", e))
 }

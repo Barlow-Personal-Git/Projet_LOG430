@@ -10,9 +10,12 @@ mod seeds;
 
 use seeds::{seed_clients, seed_inventaires, seed_produits};
 use std::env;
+use std::time::Duration;
 use db::get_conn;
+use controllers::synchroniser_controller::sync_data;
 
-fn main(){
+#[tokio::main]
+async fn main(){
 
     let args: Vec<String> = env::args().collect();
 
@@ -26,7 +29,18 @@ fn main(){
                 println!("Données insérées !");
             }
             "login" => {
-                controllers::login_controller::login();
+                controllers::login_controller::login().await;
+                
+                tokio::spawn(async {
+                    let mut interval = tokio::time::interval(Duration::from_secs(30));
+                    loop {
+                        interval.tick().await;
+                        if let Err(e) = sync_data().await {
+                            eprintln!("Erreur sync: {}", e);
+                        }
+                    }
+                });
+                controllers::menu_controller::menu_principal().await;
             }
             _ => {
                 println!("Commande inconnue. Utilise `seed` ou `login`.");

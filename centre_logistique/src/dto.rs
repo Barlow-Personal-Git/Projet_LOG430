@@ -90,3 +90,15 @@ pub struct TendancesHebdoDTO {
     pub semaine: String,
     pub total: f32,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct ProduitVenduDTO {
+    pub nom_produit: String,
+    pub nbr_vendue: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct InventaireRestantDTO {
+    pub nom_produit: String,
+    pub nbr_inventaire: i32,
+}

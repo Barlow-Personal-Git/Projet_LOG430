@@ -1,22 +1,20 @@
 use rocket::serde::json::Json;
 use rocket::get;
 use rocket::post;
-use diesel::dsl::{sum, sql};
 use diesel::sql_query;
-use diesel::sql_types::Text;
 use diesel::prelude::*;
 use diesel::upsert::excluded;
 use crate::db::get_conn;
 use crate::models::{Transaction, Magasin};
 use crate::dto::{TransactionDTO, TendancesHebdoDTO};
-use crate::models::transaction::{NouvelleTransaction, SommeTransactionParMagasin, TendancesHebdoSQL};
+use crate::models::transaction::{NouvelleTransaction, TendancesHebdoSQL};
 use crate::schema::transactions::dsl::{
     transactions,
     id_magasin as trans_id_magasin,
     total as trans_total,
     created_date as trans_created_date
 };
-use crate::schema::magasins::dsl::{magasins, nom, id_magasin};
+use crate::schema::magasins::dsl::{magasins, nom};
 
 #[get("/transactions")]
 pub async fn get_transactions() -> Result<Json<Vec<Transaction>>, String> {
@@ -58,33 +56,9 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
     Ok("Transaction insérée".to_string())
 }
 
-#[get("/produits_vendus")]
-pub async fn get_produits_vendus() -> Result<Json<Vec<SommeTransactionParMagasin>>, String> {
-    let mut conn = get_conn();
-  
-    let resultats = transactions
-        .inner_join(magasins.on(id_magasin.eq(trans_id_magasin)))
-        .group_by(nom)
-        .select((nom, sum(trans_total)))
-        .load::<(String, Option<f32>)>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
-
-    let sommes: Vec<SommeTransactionParMagasin> = resultats
-        .into_iter()
-        .map(|(magasin_nom, magasin_total)| SommeTransactionParMagasin {
-            magasin: magasin_nom,
-            total: magasin_total.unwrap_or(0.0),
-    })
-    .collect();
-
-    Ok(Json(sommes))
-}
-
 #[get("/tendances_hebdomadaires")]
 pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>>, String> {
     let mut conn = get_conn();
-    
-    let _semaine = sql::<Text>("TO_CHAR(created_date, 'IYYY-IW')");
 
     let query = "
         SELECT magasins.nom, TO_CHAR(transactions.created_date, 'IYYY-IW') AS semaine, SUM(transactions.total) AS total

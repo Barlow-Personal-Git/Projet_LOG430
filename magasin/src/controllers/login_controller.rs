@@ -2,16 +2,12 @@ use crate::session::client_session::CLIENT_SESSION;
 use crate::models::client::{Client, NouveauClient};
 use crate::db::get_conn;
 use crate::views::login_view;
-use crate::controllers::menu_controller::menu_principal;
-use crate::controllers::synchroniser_controller::sync_data;
 
 use diesel::prelude::*;
 use diesel::RunQueryDsl;
 use diesel::ExpressionMethods;
 
-use tokio::runtime::Runtime;
-
-pub fn login() {
+pub async fn login() {
     login_view::afficher_bienvenue_magasin();
 
     let mut conn = get_conn();
@@ -59,16 +55,6 @@ pub fn login() {
             let mut session = CLIENT_SESSION.lock().unwrap();
             session.set_client(client);
         }
-
-        let rt = Runtime::new().unwrap();
-        rt.block_on(async {
-            if let Err(e) = sync_data().await {
-                eprintln!("Erreur synchronisation : {}", e);
-            }
-        });
-        
-        menu_principal();
-
         break;
     }
 }

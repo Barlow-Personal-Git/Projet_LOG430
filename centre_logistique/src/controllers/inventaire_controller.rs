@@ -3,9 +3,10 @@ use rocket::get;
 use rocket::post;
 use diesel::prelude::*;
 use diesel::upsert::excluded;
+use diesel::dsl::sum;
 use crate::db::get_conn;
 use crate::models::{Inventaire, Magasin};
-use crate::dto::{InventaireDTO, InventairesFaibleDTO, InventairesSurplusDTO};
+use crate::dto::{InventaireDTO, InventairesFaibleDTO, InventairesSurplusDTO, InventaireRestantDTO};
 use crate::models::inventaire::NouveauInventaire;
 use crate::schema::inventaires::dsl::{
     inventaires,
@@ -103,8 +104,30 @@ pub async fn get_inventaires_surplus() -> Result<Json<Vec<InventairesSurplusDTO>
             nom: nom_value,
             produit_nom: produit_nom_value,
             inv_nbr: inv_nbr_value
-    })
-    .collect();
+        })
+        .collect();
 
     Ok(Json(inv_surplus))
+}
+
+#[get("/inventaires_restants")]
+pub async fn get_inventaires_restants() -> Result<Json<Vec<InventaireRestantDTO>>, String> {
+    let mut conn = get_conn();
+
+    let resultats = inventaires
+        .inner_join(produits.on(id_produit.eq(inv_id_produit)))
+        .group_by(produit_nom)
+        .select((produit_nom, sum(inv_nbr)))
+        .load::<(String, Option<i64>)>(&mut conn)
+        .map_err(|e| format!("Erreur DB : {}", e))?;
+    
+    let inv_restant: Vec<InventaireRestantDTO> = resultats
+        .into_iter()
+        .map(|(pro_nom, somme)| InventaireRestantDTO {
+            nom_produit: pro_nom,
+            nbr_inventaire: somme.unwrap_or(0) as i32,
+        })
+        .collect();
+
+    Ok(Json(inv_restant))
 }

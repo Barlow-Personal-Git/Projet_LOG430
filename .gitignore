@@ -9,6 +9,11 @@
 /centre_logistique/release/
 /centre_logistique/Cargo.lock
 
+/maison_mere/target/
+/maison_mere/debug/
+/maison_mere/release/
+/maison_mere/Cargo.lock
+
 # Rust backup files
 **/*.rs.bk
 

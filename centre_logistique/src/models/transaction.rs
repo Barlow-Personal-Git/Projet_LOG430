@@ -30,12 +30,6 @@ pub struct NouvelleTransaction {
     pub updated_date: NaiveDateTime,
 }
 
-#[derive(Queryable, Debug, Serialize)]
-pub struct SommeTransactionParMagasin {
-    pub magasin: String,
-    pub total: f32,
-}
-
 #[derive(QueryableByName, Debug)]
 pub struct TendancesHebdoSQL {
     #[diesel(sql_type = Text)]

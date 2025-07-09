@@ -1,7 +1,7 @@
 use crate::views::menu_view;
 use crate::controllers::{recherche_controller, achat_controller, retour_controller, consulter_controller};
 
-pub fn menu_principal() {
+pub async fn menu_principal() {
     loop {
         menu_view::afficher_choix();
         menu_view::afficher_recherche();

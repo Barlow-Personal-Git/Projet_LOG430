@@ -23,6 +23,8 @@ pub fn routes() -> Vec<Route> {
         get_inventaires_surplus,
         get_tendances_hebdomadaires,
         get_reapprovisionnements,
-        post_reapprovisionnements
+        post_reapprovisionnements,
+        put_reapprovisionnement,
+        get_inventaires_restants
     ]
 }

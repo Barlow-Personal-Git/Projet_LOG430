@@ -1,12 +1,14 @@
 use rocket::serde::json::Json;
 use rocket::get;
 use rocket::post;
+use rocket::serde::json::Value;
+use std::collections::HashMap;
 use diesel::prelude::*;
 use diesel::dsl::sum;
 use diesel::upsert::excluded;
 use crate::db::get_conn;
 use crate::models::{TransactionProduit, Magasin};
-use crate::dto::TransactionProduitsDTO;
+use crate::dto::{TransactionProduitsDTO, ProduitVenduDTO};
 use crate::models::transaction_produit::{NouveauTransactionProduit, SommeTransactionProduitParMagasin};
 use crate::schema::transaction_produits::dsl::{
     transaction_produits,
@@ -78,4 +80,38 @@ pub async fn get_ventes_magasin() -> Result<Json<Vec<SommeTransactionProduitParM
     .collect();
 
     Ok(Json(sommes))
+}
+
+#[get("/produits_vendus")]
+pub async fn get_produits_vendus() -> Result<Json<Vec<ProduitVenduDTO>>, String> {
+    let mut conn = get_conn();
+
+    let resultats = transaction_produits
+        .select(trp_produits)
+        .load::<Value>(&mut conn)
+        .map_err(|e| format!("Erreur DB : {}", e))?;
+    
+    let mut compteur: HashMap<String, i32> = HashMap::new();
+
+    for produit_json in resultats.iter() {
+        if let Value::Array(items) = produit_json {
+            for item in items {
+                if let Some(nom_val) = item.get("nom") {
+                    if let Some(nbr_val) = item.get("nbr") {
+                        if let (Some(nom_str), Some(nbr_i64)) = (nom_val.as_str(), nbr_val.as_i64()) {
+                            *compteur.entry(nom_str.to_string()).or_insert(0) += nbr_i64 as i32;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let mut produits_vendus: Vec<ProduitVenduDTO> = compteur.into_iter()
+        .map(|(nom_produit, nbr_vendue)| ProduitVenduDTO { nom_produit, nbr_vendue })
+        .collect();
+
+    produits_vendus.sort_by(|a, b| b.nbr_vendue.cmp(&a.nbr_vendue));
+
+    Ok(Json(produits_vendus))
 }

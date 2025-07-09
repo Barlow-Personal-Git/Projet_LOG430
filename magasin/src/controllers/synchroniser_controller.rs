@@ -53,6 +53,6 @@ pub async fn sync_data() -> Result<(), Box<dyn std::error::Error>> {
     let url = format!("{}/transaction_produits", base_url);
     client.post(&url).json(&trp_dto).send().await?;
 
-    println!("Synchronisation terminée !");
+    // println!("Synchronisation terminée !");
     Ok(())
 }

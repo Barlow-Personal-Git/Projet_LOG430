@@ -1,10 +1,9 @@
 use rocket::serde::json::Json;
 use rocket::{get, post, put, http::Status};
+use rocket_okapi::openapi;
 use diesel::prelude::*;
 use crate::db::get_conn;
 use crate::dto::AlerteReapprovisionnementDTO;
-use crate::models::produit::Produit;
-use crate::models::magasin::Magasin;
 use crate::models::reapprovisionnement::{Reapprovisionnement, NouveauReapprovisionnement};
 use crate::schema::reapprovisionnements::dsl::{
     reapprovisionnements,
@@ -18,6 +17,7 @@ use crate::schema::reapprovisionnements::dsl::{
 use crate::schema::magasins::dsl::{magasins, nom, id_magasin};
 use crate::schema::produits::dsl::{produits, id_produit, nom as nom_produit};
 
+#[openapi]
 #[get("/reapprovisionnements")]
 pub async fn get_reapprovisionnements() -> Result<Json<Vec<Reapprovisionnement>>, String> {
     let mut conn = get_conn();
@@ -28,6 +28,7 @@ pub async fn get_reapprovisionnements() -> Result<Json<Vec<Reapprovisionnement>>
         .map_err(|e| format!("Erreur DB : {}", e))
 }
 
+#[openapi]
 #[post("/reapprovisionnements", data = "<data>")]
 pub async fn post_reapprovisionnements(data: Json<NouveauReapprovisionnement>) -> Result<(Status, Json<Reapprovisionnement>), String> {
     let mut conn = get_conn();
@@ -42,6 +43,7 @@ pub async fn post_reapprovisionnements(data: Json<NouveauReapprovisionnement>) -
         .map_err(|e| format!("Erreur insertion: {}", e))
 }
 
+#[openapi]
 #[put("/reapprovisionnements/<id>", data = "<data>")]
 pub async fn put_reapprovisionnement(id: i32, data: Json<NouveauReapprovisionnement>) -> Result<Json<Reapprovisionnement>, String> {
     let mut conn = get_conn();
@@ -56,7 +58,7 @@ pub async fn put_reapprovisionnement(id: i32, data: Json<NouveauReapprovisionnem
         .map_err(|e| format!("Erreur lors de la mise à jour : {}", e))
 }
 
-
+#[openapi]
 #[get("/alerte_reapprovisionnements")]
 pub async fn get_alerte_reapprovisionnements() -> Result<Json<Vec<AlerteReapprovisionnementDTO>>, String> {
     let mut conn = get_conn();

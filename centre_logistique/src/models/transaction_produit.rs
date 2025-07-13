@@ -1,10 +1,11 @@
 use diesel::{Queryable, Insertable, Associations};
 use rocket::serde::{Serialize, Deserialize};
 use serde_json::Value;
+use schemars::JsonSchema;
 use crate::models::magasin::Magasin;
 use crate::schema::transaction_produits;
 
-#[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone)]
+#[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone, JsonSchema)]
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]
 #[serde(crate = "rocket::serde")]
 pub struct TransactionProduit {
@@ -15,7 +16,7 @@ pub struct TransactionProduit {
     pub total: f32,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, JsonSchema)]
 #[diesel(table_name = transaction_produits)]
 pub struct NouveauTransactionProduit {
     pub id_transaction: i32,
@@ -24,7 +25,7 @@ pub struct NouveauTransactionProduit {
     pub total: f32,
 }
 
-#[derive(Queryable, Debug, Serialize)]
+#[derive(Queryable, Debug, Serialize, JsonSchema)]
 pub struct SommeTransactionProduitParMagasin {
     pub magasin: String,
     pub total: f32,

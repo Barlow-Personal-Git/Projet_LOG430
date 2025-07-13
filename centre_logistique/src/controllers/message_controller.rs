@@ -1,6 +1,6 @@
 use rocket::serde::json::Json;
-use rocket::get;
-use rocket::post;
+use rocket::{get, post};
+use rocket_okapi::openapi;
 use diesel::prelude::*;
 use crate::db::get_conn;
 use crate::models::{Message, Magasin};
@@ -9,6 +9,7 @@ use crate::models::message::NouveauMessage;
 use crate::schema::messages::dsl::messages;
 use crate::schema::magasins::dsl::{magasins, nom};
 
+#[openapi]
 #[get("/messages")]
 pub async fn get_messages() -> Result<Json<Vec<Message>>, String> {
     let mut conn = get_conn();
@@ -19,6 +20,7 @@ pub async fn get_messages() -> Result<Json<Vec<Message>>, String> {
         .map_err(|e| format!("Erreur DB : {}", e))
 }
 
+#[openapi]
 #[post("/messages", data = "<data>")]
 pub async fn post_message(data: Json<MessageDTO<'_>>) -> Result<String, String> {
     let mut conn = get_conn();

@@ -1,8 +1,9 @@
 use diesel::{Queryable, Insertable};
 use rocket::serde::{Serialize, Deserialize};
 use crate::schema::produits;
+use schemars::JsonSchema;
 
-#[derive(Debug, Queryable, Clone, Serialize, Deserialize)]
+#[derive(Debug, Queryable, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct Produit {
     pub id_produit: i32,
@@ -11,7 +12,7 @@ pub struct Produit {
     pub description: String,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, JsonSchema)]
 #[diesel(table_name = produits)]
 pub struct NouveauProduit<'a> {
     pub nom: &'a str,

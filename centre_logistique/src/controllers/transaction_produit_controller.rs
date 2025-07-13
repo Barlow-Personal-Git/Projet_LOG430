@@ -1,7 +1,7 @@
-use rocket::serde::json::Json;
+use rocket::serde::json::{Json, Value};
+use rocket_okapi::openapi;
 use rocket::get;
 use rocket::post;
-use rocket::serde::json::Value;
 use std::collections::HashMap;
 use diesel::prelude::*;
 use diesel::dsl::sum;
@@ -18,17 +18,26 @@ use crate::schema::transaction_produits::dsl::{
     total as trp_total,
 };
 use crate::schema::magasins::dsl::{magasins, nom, id_magasin};
+use tracing::{info, error};
 
+#[openapi]
 #[get("/transaction_produits")]
 pub async fn get_transaction_produits() -> Result<Json<Vec<TransactionProduit>>, String> {
     let mut conn = get_conn();
 
     transaction_produits
         .load::<TransactionProduit>(&mut conn)
-        .map(|inv| Json(inv))
-        .map_err(|e| format!("Erreur DB : {}", e))
+        .map(|inv| {
+            info!("Récupération réussie, {} transactions", inv.len());
+            Json(inv)    
+        })
+        .map_err(|e| {
+            error!("Erreur DB lors de la récupération des transactions produits : {}", e);
+            format!("Erreur DB : {}", e)
+        })
 }
 
+#[openapi]
 #[post("/transaction_produits", data = "<data>")]
 pub async fn post_transaction_produits(data: Json<TransactionProduitsDTO>) -> Result<String, String> {
     let mut conn = get_conn();
@@ -36,8 +45,13 @@ pub async fn post_transaction_produits(data: Json<TransactionProduitsDTO>) -> Re
     let magasin_record = magasins
         .filter(nom.eq(&data.magasin))
         .first::<Magasin>(&mut conn)
-        .map_err(|e| format!("Magasin inconnu : {}", e))?;
+        .map_err(|e| {
+            error!("Erreur DB lors de la récupération des magasins : {}", e);
+            format!("Erreur DB : {}", e)
+        })?;
     
+    info!("Insertion des produits pour id_magasin {}", magasin_record.id_magasin);
+
     let new_trp: Vec<NouveauTransactionProduit> = data.transaction_produits.iter()
         .map(|trans_produits| NouveauTransactionProduit {
             id_magasin: magasin_record.id_magasin,
@@ -55,11 +69,17 @@ pub async fn post_transaction_produits(data: Json<TransactionProduitsDTO>) -> Re
             trp_total.eq(excluded(trp_total))
         ))
         .execute(&mut conn)
-        .map_err(|e| format!("Erreur insertion: {}", e))?;
+        .map_err(|e| {
+            error!("Erreur Insertion des transaction_produits : {}", e);
+            format!("Erreur Insertion : {}", e)
+        })?;
+
+    info!("Insertion pour le magasin {}", magasin_record.id_magasin);
 
     Ok("Inventaire insérée".to_string())
 }
 
+#[openapi]
 #[get("/ventes_magasin")]
 pub async fn get_ventes_magasin() -> Result<Json<Vec<SommeTransactionProduitParMagasin>>, String> {
     let mut conn = get_conn();
@@ -69,7 +89,10 @@ pub async fn get_ventes_magasin() -> Result<Json<Vec<SommeTransactionProduitParM
         .group_by(nom)
         .select((nom, sum(trp_total)))
         .load::<(String, Option<f32>)>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
+        .map_err(|e| {
+            error!("Erreur DB lors de la récupération des ventes magasins : {}", e);
+            format!("Erreur DB : {}", e)
+        })?;
 
     let sommes: Vec<SommeTransactionProduitParMagasin> = resultats
         .into_iter()
@@ -78,10 +101,12 @@ pub async fn get_ventes_magasin() -> Result<Json<Vec<SommeTransactionProduitParM
             total: magasin_total.unwrap_or(0.0),
     })
     .collect();
+    info!("Récupération réussie, {} transactions produits", sommes.len());
 
     Ok(Json(sommes))
 }
 
+#[openapi]
 #[get("/produits_vendus")]
 pub async fn get_produits_vendus() -> Result<Json<Vec<ProduitVenduDTO>>, String> {
     let mut conn = get_conn();
@@ -89,7 +114,10 @@ pub async fn get_produits_vendus() -> Result<Json<Vec<ProduitVenduDTO>>, String>
     let resultats = transaction_produits
         .select(trp_produits)
         .load::<Value>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
+        .map_err(|e| {
+            error!("Erreur DB lors de la récupération des produits vendus : {}", e);
+            format!("Erreur DB : {}", e)
+        })?;
     
     let mut compteur: HashMap<String, i32> = HashMap::new();
 
@@ -112,6 +140,7 @@ pub async fn get_produits_vendus() -> Result<Json<Vec<ProduitVenduDTO>>, String>
         .collect();
 
     produits_vendus.sort_by(|a, b| b.nbr_vendue.cmp(&a.nbr_vendue));
+    info!("Récupération réussie, {} produits vendus", produits_vendus.len());
 
     Ok(Json(produits_vendus))
 }

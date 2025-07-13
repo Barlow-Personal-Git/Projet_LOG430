@@ -1,7 +1,7 @@
 [package]
 name = "centre_logistique"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
 rocket = { version = "0.5.1", features = ["json"] }
@@ -14,3 +14,12 @@ dotenvy = "0.15"
 chrono = { version = "0.4", features = ["serde"] }
 reqwest = { version = "0.11", features = ["json", "blocking"] }
 tokio = { version = "1", features = ["full"] }
+rocket_okapi = { version = "0.9", features = ["swagger"] }
+schemars = { version = "0.8", features = ["chrono"] }
+prometheus = "0.13"
+lazy_static = "1.4"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "json"] }
+tracing-appender = "0.2"
+cached = "0.34"
+cached_proc_macro = "0.7"

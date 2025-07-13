@@ -1,11 +1,12 @@
 use chrono::NaiveDateTime;
 use diesel::{Queryable, Insertable, Associations};
 use rocket::serde::{Serialize, Deserialize};
+use schemars::JsonSchema;
 use crate::models::magasin::Magasin;
 use crate::models::produit::Produit;
 use crate::schema::reapprovisionnements;
 
-#[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone)]
+#[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone, JsonSchema)]
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]
 #[diesel(belongs_to(Produit, foreign_key = id_produit))]
 #[serde(crate = "rocket::serde")]
@@ -18,7 +19,7 @@ pub struct Reapprovisionnement {
     pub created_date: NaiveDateTime,
 }
 
-#[derive(Insertable, Serialize, Deserialize)]
+#[derive(Insertable, Serialize, Deserialize, JsonSchema)]
 #[diesel(table_name = reapprovisionnements)]
 pub struct NouveauReapprovisionnement {
     pub id_produit: i32,

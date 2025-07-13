@@ -3,10 +3,11 @@ use diesel::prelude::*;
 use diesel::sql_types::{Text, Nullable, Float};
 use diesel::{Queryable, Insertable, Associations};
 use rocket::serde::{Serialize, Deserialize};
+use schemars::JsonSchema;
 use crate::models::magasin::Magasin;
 use crate::schema::transactions;
 
-#[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone)]
+#[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone, JsonSchema)]
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]
 #[serde(crate = "rocket::serde")]
 pub struct Transaction {

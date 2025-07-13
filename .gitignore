@@ -53,6 +53,7 @@ Desktop.ini
 *.swp
 *.bak
 *.old
+centre_logistique/*.json
 
 # === Environment variables ===
 .env

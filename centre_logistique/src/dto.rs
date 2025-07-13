@@ -1,7 +1,8 @@
-use rocket::serde::{Deserialize, Serialize };
+use rocket::serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
 use chrono::NaiveDateTime;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct NouveauInventaireDTO<'a> {
     pub id_produit: i32,
@@ -9,14 +10,14 @@ pub struct NouveauInventaireDTO<'a> {
     pub nbr: i32,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct InventaireDTO<'a> {
     pub magasin: &'a str,
     pub inventaires: Vec<NouveauInventaireDTO<'a>>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct NouvelleTransactionDTO {
     pub total: f32,
@@ -24,35 +25,35 @@ pub struct NouvelleTransactionDTO {
     pub updated_date: NaiveDateTime,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct TransactionDTO<'a> {
     pub magasin: &'a str,
     pub transactions: Vec<NouvelleTransactionDTO>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct NouveauMessageDTO<'a> {
     pub id_produit: i32,
     pub message: &'a str,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct MessageDTO<'a> {
     pub magasin: &'a str,
     pub messages: Vec<NouveauMessageDTO<'a>>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct TransactionProduitsDTO {
     pub magasin: String,
     pub transaction_produits: Vec<NouvelleTransactionProduitsDTO>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct NouvelleTransactionProduitsDTO {
     pub id_transaction: i32,
@@ -60,7 +61,7 @@ pub struct NouvelleTransactionProduitsDTO {
     pub total: f32,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct NouvelleProduitsDTO {
     pub nom: String,
@@ -68,7 +69,7 @@ pub struct NouvelleProduitsDTO {
     pub nbr: i32,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct InventairesFaibleDTO {
     pub nom: String,
@@ -76,7 +77,7 @@ pub struct InventairesFaibleDTO {
     pub inv_nbr: i32,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct InventairesSurplusDTO {
     pub nom: String,
@@ -84,7 +85,7 @@ pub struct InventairesSurplusDTO {
     pub inv_nbr: i32,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct TendancesHebdoDTO {
     pub magasin: String,
@@ -92,23 +93,38 @@ pub struct TendancesHebdoDTO {
     pub total: f32,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct ProduitVenduDTO {
     pub nom_produit: String,
     pub nbr_vendue: i32,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct InventaireRestantDTO {
     pub nom_produit: String,
     pub nbr_inventaire: i32,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct AlerteReapprovisionnementDTO {
     pub magasin: String,
     pub produit: String,
     pub nbr: i32,
     pub status: String,
     pub date_creation: NaiveDateTime,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct InventaireUpdateDTO {
+    pub id_produit: i32,
+    pub id_magasin: i32,
+    pub nbr: i32,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(crate = "rocket::serde")]
+pub struct ProduitUpdateDTO {
+    pub nom: String,
+    pub prix: f32,
+    pub description: String,
 }

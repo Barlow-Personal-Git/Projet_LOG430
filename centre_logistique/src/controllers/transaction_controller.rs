@@ -1,6 +1,6 @@
 use rocket::serde::json::Json;
-use rocket::get;
-use rocket::post;
+use rocket::{get, post};
+use rocket_okapi::openapi;
 use diesel::sql_query;
 use diesel::prelude::*;
 use diesel::upsert::excluded;
@@ -15,7 +15,12 @@ use crate::schema::transactions::dsl::{
     created_date as trans_created_date
 };
 use crate::schema::magasins::dsl::{magasins, nom};
+use crate::metrics::{HTTP_REQUESTS_TOTAL, HTTP_REQ_DURATION_SECONDS};
+use prometheus::HistogramTimer;
+use tracing::{info, error};
+use rocket::http::Status;
 
+#[openapi]
 #[get("/transactions")]
 pub async fn get_transactions() -> Result<Json<Vec<Transaction>>, String> {
     let mut conn = get_conn();
@@ -26,6 +31,7 @@ pub async fn get_transactions() -> Result<Json<Vec<Transaction>>, String> {
         .map_err(|e| format!("Erreur DB : {}", e))
 }
 
+#[openapi]
 #[post("/transactions", data = "<data>")]
 pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, String> {
     let mut conn = get_conn();
@@ -56,8 +62,12 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
     Ok("Transaction insérée".to_string())
 }
 
+#[openapi]
 #[get("/tendances_hebdomadaires")]
-pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>>, String> {
+pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>>, Status> {
+    
+    let timer: HistogramTimer = HTTP_REQ_DURATION_SECONDS.start_timer();
+
     let mut conn = get_conn();
 
     let query = "
@@ -69,7 +79,11 @@ pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>
     ";
     let resultats = sql_query(query)
         .load::<TendancesHebdoSQL>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
+        .map_err(|e| {
+            error!("Erreur DB lors de la récupération des magasins : {}", e);
+            HTTP_REQUESTS_TOTAL.with_label_values(&["500"]).inc();
+            Status::InternalServerError
+        })?;
 
     let tendances: Vec<TendancesHebdoDTO> = resultats
         .into_iter()
@@ -79,6 +93,9 @@ pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>
             total: res_query.total.unwrap_or(0.0),
     })
     .collect();
+    info!("Générer la tendance hebdomadaires {:?}", tendances);
 
+    HTTP_REQUESTS_TOTAL.with_label_values(&["200"]).inc();
+    timer.observe_duration();
     Ok(Json(tendances))
 }

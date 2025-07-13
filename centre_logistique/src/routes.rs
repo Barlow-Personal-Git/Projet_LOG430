@@ -1,14 +1,17 @@
+use rocket_okapi::{openapi_get_routes};
 use rocket::{routes, Route};
 use crate::controllers::{
     inventaire_controller::*,
     transaction_controller::*,
     transaction_produit_controller::*,
     message_controller::*,
+    produit_controller::*,
     reapprovisionnement_controller::*
 };
+use crate::metrics::metrics;
 
 pub fn routes() -> Vec<Route> {
-    routes![
+    let mut routes  = openapi_get_routes![
         get_inventaires,
         post_inventaires,
         get_transactions,
@@ -26,6 +29,15 @@ pub fn routes() -> Vec<Route> {
         post_reapprovisionnements,
         put_reapprovisionnement,
         get_inventaires_restants,
-        get_alerte_reapprovisionnements
-    ]
+        get_alerte_reapprovisionnements,
+        get_inventaires_id,
+        put_inventaire,
+        get_inventaires_par_magasins,
+        get_produits,
+        get_produit,
+        put_produit,
+    ];
+    routes.extend(routes![metrics]);
+
+    routes
 }

@@ -1,0 +1,43 @@
+{% extends "base" %}
+
+{% block title %}Mon panier{% endblock title %}
+
+{% block content %}
+    <a href="/menu" class="btn btn-secondary">Retour</a>
+
+    <h1>Panier</h1>
+
+    <a href="/panier/ajouter" class="btn btn-primary">Ajouter dans le panier</a>
+    
+    {% if message %}
+    <p>{{ message }}</p>
+    {% else %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Quantité</th>
+            <th>Prix unitaire</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in produits %}
+            <tr>
+            <td>{{ item.nom }}</td>
+            <td>{{ item.prix }}</td>
+            <td>{{ item.nbr }}</td>
+            <td>{{ item.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <form action="/panier/vider" method="post">
+        <button type="submit">Vider le panier</button>
+    </form>
+
+    <form action="/panier/achat/confirmer" method="post">
+        <button type="submit">Confirmer l'achat</button>
+    </form>
+{% endif %}
+{% endblock content %}

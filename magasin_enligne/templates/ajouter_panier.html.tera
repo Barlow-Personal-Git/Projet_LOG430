@@ -1,0 +1,38 @@
+{% extends "base" %}
+
+{% block title %}Ajouter au panier{% endblock title %}
+
+{% block content %}
+<h1>Ajouter un produit au panier</h1>
+
+<form id="ajouterPanierForm">
+  <label for="id_produit">ID du produit:</label>
+  <input type="number" id="id_produit" name="id_produit" required>
+
+  <label for="nbr">Quantité:</label>
+  <input type="number" id="nbr" name="nbr" value="1" min="1" required>
+
+  <button type="submit">Ajouter au panier</button>
+</form>
+
+<script>
+document.getElementById("ajouterPanierForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const id_produit = document.getElementById("id_produit").value;
+    const nbr = document.getElementById("nbr").value;
+
+    const response = await fetch("/panier/ajouter", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ id_produit: parseInt(id_produit), nbr: parseInt(nbr) })
+    });
+
+    if (response.ok) {
+        alert("Produit ajouté au panier!");
+        window.location.href = "/panier";
+    } else {
+        alert("Erreur lors de l'ajout au panier.");
+    }
+});
+</script>
+{% endblock content %}

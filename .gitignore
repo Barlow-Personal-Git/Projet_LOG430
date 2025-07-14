@@ -14,6 +14,11 @@
 /maison_mere/release/
 /maison_mere/Cargo.lock
 
+/magasin_enligne/target/
+/magasin_enligne/debug/
+/magasin_enligne/release/
+/magasin_enligne/Cargo.lock
+
 # Rust backup files
 **/*.rs.bk
 

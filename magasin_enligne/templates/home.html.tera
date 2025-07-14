@@ -1,0 +1,16 @@
+{% extends "base" %}
+
+{% block title %}Page d'accueil{% endblock title %}
+
+{% block header %}
+  Page d'accueil
+{% endblock header %}
+
+
+{% block content %}
+   <ul class="list-group">
+    <li class="list-group-item">
+      <a href="{{ lien.url }}">{{ lien.title }}</a>
+    </li>
+  </ul>
+{% endblock content %}

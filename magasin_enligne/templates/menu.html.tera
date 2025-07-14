@@ -1,0 +1,18 @@
+{% extends "base" %}
+
+{% block title %}Menu{% endblock title %}
+
+{% block header %}
+  Menu
+{% endblock header %}
+
+
+{% block content %}
+  <ul class="list-group">
+    {% for lien in liens %}
+      <li class="list-group-item">
+        <a href="{{ lien.url }}">{{ lien.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock content %}

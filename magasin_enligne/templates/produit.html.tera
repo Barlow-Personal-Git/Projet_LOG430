@@ -1,0 +1,36 @@
+{% extends "base" %}
+
+{% block title %}Résultats de recherche{% endblock title %}
+
+{% block content %}
+    <button onclick="history.back()">Retour</button>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    {% if resultats %}
+        <table class="table table-striped">
+        <thead>
+            <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Prix</th>
+            <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produit in resultats %}
+            <tr>
+                <td>{{ produit.id_produit }}</td>
+                <td>{{ produit.nom }}</td>
+                <td>{{ produit.prix_decimal }}</td>
+                <td>{{ produit.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    {% else %}
+        <p>Aucun résultat à afficher.</p>
+    {% endif %}
+    {% endblock content %}

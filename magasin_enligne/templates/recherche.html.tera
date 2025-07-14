@@ -1,0 +1,35 @@
+{% extends "base" %}
+
+{% block title %}Recherche produit{% endblock title %}
+
+{% block content %}
+    <button onclick="history.back()">Retour</button>
+    <div>
+        <label for="menu">Menu :</label>
+        <select name="menu" id="menu" required>
+            <option value="id_produit">ID</option>
+            <option value="nom">Nom</option>
+            <option value="categorie">Catégorie</option>
+        </select>
+
+        <label for="valeur">Valeur :</label>
+        <input type="text" name="valeur" id="valeur" required>
+
+        <button type="button" id="rechercherBtn">Rechercher</button>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script>
+        document.getElementById('rechercherBtn').addEventListener('click', function() {
+            const selection = document.getElementById('menu').value;
+            const valeur = encodeURIComponent(document.getElementById('valeur').value.trim());
+
+            if (valeur) {
+                window.location.href = `/produit?${selection}=${valeur}`;
+            } else {
+                alert("Veuillez entrer une valeur de recherche.");
+            }
+        });
+    </script>
+{% endblock script %}

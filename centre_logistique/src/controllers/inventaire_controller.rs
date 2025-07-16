@@ -32,8 +32,8 @@ pub async fn get_inventaires() -> Result<Json<Vec<Inventaire>>, String> {
 
     inventaires
         .load::<Inventaire>(&mut conn)
-        .map(|inv| Json(inv))
-        .map_err(|e| format!("Erreur DB : {}", e))
+        .map(Json)
+        .map_err(|e| format!("Erreur DB : {e}"))
 }
 
 #[openapi]
@@ -109,7 +109,7 @@ pub async fn get_inventaires_par_magasins(
         Err(e) => {
             HTTP_REQUESTS_TOTAL.with_label_values(&["500"]).inc();
             timer.observe_duration();
-            error!("Erreur DB : {}", e);
+            error!("Erreur DB : {e}");
             return Err(Status::InternalServerError);
         }
     };
@@ -133,7 +133,7 @@ pub async fn put_inventaire(data: Json<InventaireUpdateDTO>) -> Result<String, S
     )
     .set(inv_nbr.eq(sql::<Integer>(&format!("nbr + {}", update_data.nbr))))
     .execute(&mut conn)
-    .map_err(|e| format!("Erreur lors de la mise à jour : {}", e))?;
+    .map_err(|e| format!("Erreur lors de la mise à jour : {e}"))?;
 
     Ok("Quantité mise à jour.".to_string())
 }
@@ -146,7 +146,7 @@ pub async fn post_inventaires(data: Json<InventaireDTO<'_>>) -> Result<String, S
     let magasin_record = magasins
         .filter(nom.eq(&data.magasin))
         .first::<Magasin>(&mut conn)
-        .map_err(|e| format!("Magasin inconnu : {}", e))?;
+        .map_err(|e| format!("Magasin inconnu : {e}"))?;
 
     let new_inv: Vec<NouveauInventaire> = data
         .inventaires
@@ -154,7 +154,7 @@ pub async fn post_inventaires(data: Json<InventaireDTO<'_>>) -> Result<String, S
         .map(|inv| NouveauInventaire {
             id_produit: inv.id_produit,
             id_magasin: magasin_record.id_magasin,
-            category: &inv.category,
+            category: inv.category,
             nbr: inv.nbr,
         })
         .collect();
@@ -165,7 +165,7 @@ pub async fn post_inventaires(data: Json<InventaireDTO<'_>>) -> Result<String, S
         .do_update()
         .set((inv_nbr.eq(excluded(inv_nbr)),))
         .execute(&mut conn)
-        .map_err(|e| format!("Erreur insertion: {}", e))?;
+        .map_err(|e| format!("Erreur insertion: {e}"))?;
 
     Ok("Inventaire insérée".to_string())
 }
@@ -183,7 +183,7 @@ pub async fn get_inventaires_faible() -> Result<Json<Vec<InventairesFaibleDTO>>,
         .select((nom, produit_nom, inv_nbr))
         .order(nom.asc())
         .load::<(String, String, i32)>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
+        .map_err(|e| format!("Erreur DB : {e}"))?;
 
     let inv_faible: Vec<InventairesFaibleDTO> = resultats
         .into_iter()
@@ -212,7 +212,7 @@ pub async fn get_inventaires_surplus() -> Result<Json<Vec<InventairesSurplusDTO>
         .select((nom, produit_nom, inv_nbr))
         .order(nom.asc())
         .load::<(String, String, i32)>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
+        .map_err(|e| format!("Erreur DB : {e}"))?;
 
     let inv_surplus: Vec<InventairesSurplusDTO> = resultats
         .into_iter()
@@ -238,7 +238,7 @@ pub async fn get_inventaires_restants() -> Result<Json<Vec<InventaireRestantDTO>
         .group_by(produit_nom)
         .select((produit_nom, sum(inv_nbr)))
         .load::<(String, Option<i64>)>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
+        .map_err(|e| format!("Erreur DB : {e}"))?;
 
     let inv_restant: Vec<InventaireRestantDTO> = resultats
         .into_iter()

@@ -1,0 +1,50 @@
+name: CI - Centre Logistique
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'centre_logistique/**'
+      - '.github/workflows/ci_centre_logistique.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'centre_logistique/**'
+      - '.github/workflows/ci_centre_logistique.yml'
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build centre_logistique
+        run: cargo build -p centre_logistique --verbose
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Lint with Clippy
+        run: cargo clippy -p centre_logistique --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        run: cargo test -p centre_logistique --verbose

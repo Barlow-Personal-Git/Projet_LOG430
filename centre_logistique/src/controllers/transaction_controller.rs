@@ -56,7 +56,7 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
         .do_update()
         .set(trans_total.eq(excluded(trans_total)))
         .execute(&mut conn)
-        .map_err(|e| format!("Erreur insertion transaction_produits: {}", e))?;
+        .map_err(|e| format!("Erreur insertion transaction_produits: {e}"))?;
 
     Ok("Transaction insérée".to_string())
 }
@@ -78,7 +78,7 @@ pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>
     let resultats = sql_query(query)
         .load::<TendancesHebdoSQL>(&mut conn)
         .map_err(|e| {
-            error!("Erreur DB lors de la récupération des magasins : {}", e);
+            error!("Erreur DB lors de la récupération des magasins : {e}");
             HTTP_REQUESTS_TOTAL.with_label_values(&["500"]).inc();
             Status::InternalServerError
         })?;

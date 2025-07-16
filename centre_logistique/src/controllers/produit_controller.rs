@@ -22,8 +22,8 @@ pub async fn get_produits() -> Result<Json<Vec<Produit>>, String> {
 
     produits
         .load::<Produit>(&mut conn)
-        .map(|inv| Json(inv))
-        .map_err(|e| format!("Erreur DB : {}", e))
+        .map(Json)
+        .map_err(|e| format!("Erreur DB : {e}"))
 }
 
 #[openapi]
@@ -38,7 +38,7 @@ pub async fn get_produit(id: i32) -> Result<Json<Produit>, String> {
     let produit = produits
         .find(id)
         .first::<Produit>(&mut conn)
-        .map_err(|e| format!("Erreur lecture produit : {}", e))?;
+        .map_err(|e| format!("Erreur lecture produit : {e}"))?;
 
     cache.cache_set(id, produit.clone());
 

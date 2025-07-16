@@ -16,8 +16,8 @@ pub async fn get_messages() -> Result<Json<Vec<Message>>, String> {
 
     messages
         .load::<Message>(&mut conn)
-        .map(|inv| Json(inv))
-        .map_err(|e| format!("Erreur DB : {}", e))
+        .map(Json)
+        .map_err(|e| format!("Erreur DB : {e}"))
 }
 
 #[openapi]
@@ -28,7 +28,7 @@ pub async fn post_message(data: Json<MessageDTO<'_>>) -> Result<String, String> 
     let magasin_record = magasins
         .filter(nom.eq(&data.magasin))
         .first::<Magasin>(&mut conn)
-        .map_err(|e| format!("Magasin inconnu : {}", e))?;
+        .map_err(|e| format!("Magasin inconnu : {e}"))?;
 
     let new_messages: Vec<NouveauMessage> = data
         .messages
@@ -43,7 +43,7 @@ pub async fn post_message(data: Json<MessageDTO<'_>>) -> Result<String, String> 
     diesel::insert_into(messages)
         .values(&new_messages)
         .execute(&mut conn)
-        .map_err(|e| format!("Erreur insertion: {}", e))?;
+        .map_err(|e| format!("Erreur insertion: {e}"))?;
 
     Ok("Message insérée".to_string())
 }

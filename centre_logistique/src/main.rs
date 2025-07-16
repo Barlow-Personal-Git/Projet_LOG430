@@ -19,7 +19,7 @@ use tracing_appender::{non_blocking, non_blocking::WorkerGuard};
 use tracing_subscriber::EnvFilter;
 
 #[rocket::main]
-async fn main() -> Result<(), rocket::Error> {
+async fn main() -> Result<(), Box<rocket::Error>> {
     let host = env::var("SERVER_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port_str = env::var("SERVER_PORT").unwrap_or_else(|_| "8000".to_string());
     let port: u16 = port_str
@@ -68,7 +68,7 @@ async fn main() -> Result<(), rocket::Error> {
             }),
         );
     }
-    println!("Server run on http://{}:{}", host, port);
+    println!("Server run on http://{host}:{port}");
     rocket.launch().await?;
     Ok(())
 }

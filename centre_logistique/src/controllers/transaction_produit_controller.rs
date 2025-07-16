@@ -31,11 +31,8 @@ pub async fn get_transaction_produits() -> Result<Json<Vec<TransactionProduit>>,
             Json(inv)
         })
         .map_err(|e| {
-            error!(
-                "Erreur DB lors de la récupération des transactions produits : {}",
-                e
-            );
-            format!("Erreur DB : {}", e)
+            error!("Erreur DB lors de la récupération des transactions produits : {e}");
+            format!("Erreur DB : {e}")
         })
 }
 
@@ -50,8 +47,8 @@ pub async fn post_transaction_produits(
         .filter(nom.eq(&data.magasin))
         .first::<Magasin>(&mut conn)
         .map_err(|e| {
-            error!("Erreur DB lors de la récupération des magasins : {}", e);
-            format!("Erreur DB : {}", e)
+            error!("Erreur DB lors de la récupération des magasins : {e}");
+            format!("Erreur DB : {e}")
         })?;
 
     info!(
@@ -80,8 +77,8 @@ pub async fn post_transaction_produits(
         ))
         .execute(&mut conn)
         .map_err(|e| {
-            error!("Erreur Insertion des transaction_produits : {}", e);
-            format!("Erreur Insertion : {}", e)
+            error!("Erreur Insertion des transaction_produits : {e}");
+            format!("Erreur Insertion : {e}")
         })?;
 
     info!("Insertion pour le magasin {}", magasin_record.id_magasin);
@@ -100,11 +97,8 @@ pub async fn get_ventes_magasin() -> Result<Json<Vec<SommeTransactionProduitParM
         .select((nom, sum(trp_total)))
         .load::<(String, Option<f32>)>(&mut conn)
         .map_err(|e| {
-            error!(
-                "Erreur DB lors de la récupération des ventes magasins : {}",
-                e
-            );
-            format!("Erreur DB : {}", e)
+            error!("Erreur DB lors de la récupération des ventes magasins : {e}");
+            format!("Erreur DB : {e}")
         })?;
 
     let sommes: Vec<SommeTransactionProduitParMagasin> = resultats
@@ -133,11 +127,8 @@ pub async fn get_produits_vendus() -> Result<Json<Vec<ProduitVenduDTO>>, String>
         .select(trp_produits)
         .load::<Value>(&mut conn)
         .map_err(|e| {
-            error!(
-                "Erreur DB lors de la récupération des produits vendus : {}",
-                e
-            );
-            format!("Erreur DB : {}", e)
+            error!("Erreur DB lors de la récupération des produits vendus : {e}");
+            format!("Erreur DB : {e}")
         })?;
 
     let mut compteur: HashMap<String, i32> = HashMap::new();

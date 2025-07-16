@@ -35,7 +35,6 @@ async fn main() -> Result<(), rocket::Error> {
 
     rocket::build()
         .mount("/", routes())
-        // .mount("/static", FileServer::from(relative!("static")))
         .attach(Template::fairing())
         .launch()
         .await?;

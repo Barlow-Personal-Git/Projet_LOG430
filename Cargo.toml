@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "centre_logistique",
+    "magasin",
+    "magasin_enligne",
+    "maison_mere"
+]

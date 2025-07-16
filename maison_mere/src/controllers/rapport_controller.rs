@@ -40,14 +40,14 @@ impl<'r> Responder<'r, 'static> for PdfResponse {
 
 async fn fetch_ventes(base_url: &str) -> Result<Vec<VenteParMagasin>, reqwest::Error> {
     let client = Client::new();
-    let url = format!("{}/ventes_magasin", base_url);
+    let url = format!("{base_url}/ventes_magasin");
     let resp = client.get(&url).send().await?;
     resp.json::<Vec<VenteParMagasin>>().await
 }
 
 async fn fetch_produits_vendus(base_url: &str) -> Result<Vec<ProduitVendu>, reqwest::Error> {
     let client = Client::new();
-    let url = format!("{}/produits_vendus", base_url);
+    let url = format!("{base_url}/produits_vendus");
     let resp = client.get(&url).send().await?;
     resp.json::<Vec<ProduitVendu>>().await
 }
@@ -56,7 +56,7 @@ async fn fetch_inventaires_restants(
     base_url: &str,
 ) -> Result<Vec<InventaireRestants>, reqwest::Error> {
     let client = Client::new();
-    let url = format!("{}/inventaires_restants", base_url);
+    let url = format!("{base_url}/inventaires_restants");
     let resp = client.get(&url).send().await?;
     resp.json::<Vec<InventaireRestants>>().await
 }
@@ -66,29 +66,29 @@ pub async fn rapport() -> Result<PdfResponse, Status> {
     let base_url = match env::var("CENTRAL_URL") {
         Ok(url) => url,
         Err(e) => {
-            eprintln!("Erreur récupération CENTRAL_URL: {}", e);
+            eprintln!("Erreur récupération CENTRAL_URL: {e}");
             return Err(rocket::http::Status::InternalServerError);
         }
     };
 
     let ventes = fetch_ventes(&base_url).await.map_err(|e| {
-        eprintln!("Erreur fetch ventes: {}", e);
+        eprintln!("Erreur fetch ventes: {e}");
         Status::InternalServerError
     })?;
 
     let produits_vendus = fetch_produits_vendus(&base_url).await.map_err(|e| {
-        eprintln!("Erreur fetch produits vendus: {}", e);
+        eprintln!("Erreur fetch produits vendus: {e}");
         Status::InternalServerError
     })?;
 
     let inventaires_restants = fetch_inventaires_restants(&base_url).await.map_err(|e| {
-        eprintln!("Erreur fetch inventaires restants: {}", e);
+        eprintln!("Erreur fetch inventaires restants: {e}");
         Status::InternalServerError
     })?;
 
     let font_family =
         genpdf::fonts::from_files("./fonts", "LiberationSans", None).map_err(|e| {
-            eprintln!("Erreur chargement police: {}", e);
+            eprintln!("Erreur chargement police: {e}");
             Status::InternalServerError
         })?;
 
@@ -125,7 +125,7 @@ pub async fn rapport() -> Result<PdfResponse, Status> {
 
     let mut buffer = Vec::new();
     doc.render(&mut buffer).map_err(|e| {
-        eprintln!("Erreur génération PDF: {}", e);
+        eprintln!("Erreur génération PDF: {e}");
         Status::InternalServerError
     })?;
 

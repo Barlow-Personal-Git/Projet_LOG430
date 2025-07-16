@@ -2,13 +2,11 @@ mod controllers;
 mod routes;
 
 use dotenvy::dotenv;
-use rocket::fs::{relative, FileServer};
 use rocket_dyn_templates::Template;
 use routes::routes;
-use std::env;
 
 #[rocket::main]
-async fn main() -> Result<(), rocket::Error> {
+async fn main() -> Result<(), Box<rocket::Error>> {
     dotenv().ok();
 
     rocket::build()

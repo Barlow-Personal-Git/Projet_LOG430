@@ -38,13 +38,13 @@ pub fn get_produit(
             .ok()
     } else if let Some(nom_val) = nom {
         produits
-            .filter(p_nom.ilike(format!("%{}%", nom_val)))
+            .filter(p_nom.ilike(format!("%{nom_val}%")))
             .load::<Produit>(&mut conn)
             .ok()
     } else if let Some(category_val) = categorie {
         inventaires
             .inner_join(produits.on(p_id_produit.eq(i_id_produit)))
-            .filter(i_category.ilike(format!("%{}%", category_val)))
+            .filter(i_category.ilike(format!("%{category_val}%")))
             .select(produits::all_columns())
             .load::<Produit>(&mut conn)
             .ok()

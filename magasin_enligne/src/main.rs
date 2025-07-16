@@ -15,7 +15,7 @@ use seeds::{seed_clients, seed_inventaires, seed_produits};
 use std::env;
 
 #[rocket::main]
-async fn main() -> Result<(), rocket::Error> {
+async fn main() -> Result<(), Box<rocket::Error>> {
     dotenv().ok();
 
     let args: Vec<String> = env::args().collect();

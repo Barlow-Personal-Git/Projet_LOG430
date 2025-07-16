@@ -14,10 +14,7 @@ pub fn map_transaction_produits(
 
     let mut grouped: HashMap<i32, Vec<&TransactionProduit>> = HashMap::new();
     for tp in &transaction_produits {
-        grouped
-            .entry(tp.id_transaction)
-            .or_default()
-            .push(tp);
+        grouped.entry(tp.id_transaction).or_default().push(tp);
     }
 
     let transactions_dto = transactions

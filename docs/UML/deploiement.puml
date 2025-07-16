@@ -1,0 +1,13 @@
+@startuml
+node "Magasin" as   Magasin {
+  artifact "Application Magasin\n(app.py)" as AppMagasin
+}
+
+node "Serveur Mère" as Server {
+  database "PostgreSQL Centrale" as PostgresCentral
+  artifact "server.py" as ApiServeur
+}
+
+Magasin --> ApiServeur : Requêtes HTTP/Synchronisation
+ApiServeur --> PostgresCentral : Accès base de données
+@enduml

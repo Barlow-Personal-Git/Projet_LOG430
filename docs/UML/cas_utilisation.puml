@@ -1,0 +1,20 @@
+@startuml
+actor "Client" as Client
+actor "Système mère" as Systeme
+
+usecase "Rechercher un produit" as UC1
+usecase "Acheter un produit" as UC2
+usecase "Retourner une vente" as UC3
+usecase "Consulter la liste des produits" as UC4
+usecase "Déclencher un réapprovisionnement" as UC5
+usecase "Générer un rapport de ventes" as UC6
+usecase "Visualiser les magasins dans un tableau de bord" as UC7
+
+Client --> UC1
+Client --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC5
+Systeme --> UC6
+Systeme --> UC7
+@enduml

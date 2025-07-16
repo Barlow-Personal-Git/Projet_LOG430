@@ -1,0 +1,42 @@
+@startuml
+
+class Produit {
+    -idProduit: int
+    -nom: string
+    -prix: float
+    -description: string
+}
+
+class Inventaire {
+    -id_inventaire: int
+    -id_produit: int
+    -category: string
+    -nbr: int
+}
+
+class Client {
+    -id_client: int
+    -nom: string
+    -role: string
+}
+
+class TransactionProduit {
+    -id_transaction_produit: int
+    -id_transaction: int
+    -id_produit: int
+    -nbr: int
+    -total: float
+}
+
+class Transaction {
+    -id_transaction: int
+    -id_client: int
+    -total: float
+}
+
+Client "1" -- "0..*" Transaction : contient >
+Inventaire "1" -- "0..*" Produit : possède >
+Produit "0..*" -- "0..*" TransactionProduit : présente >
+TransactionProduit "1..*" -- "1" Transaction : contient >
+
+@enduml

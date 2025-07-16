@@ -1,0 +1,32 @@
+@startuml
+skinparam componentStyle rectangle
+
+package "Application de la console" {
+
+  package "Présentation" {
+    component "views"
+    component "app.py"
+  }
+
+  package "Logique métier" {
+    component "AchatController"
+    component "ConsulterController"
+    component "MenuController"
+    component "LoginController"
+    component "RetourController"
+    component "RechercheController"
+  }
+
+  package "Persistance" {
+    component "SQLAlchemy"
+    component "PostgreSQL"
+    component "Model (Produit, Client, Inventaire, Transaction)"
+  }
+
+  "app.py" --> "AchatController"
+  "AchatController" --> "Model (Produit, Client, Inventaire, Transaction)"
+  "Model (Produit, Client, Inventaire, Transaction)" --> "SQLAlchemy"
+  "SQLAlchemy" --> "PostgreSQL"
+}
+
+@enduml

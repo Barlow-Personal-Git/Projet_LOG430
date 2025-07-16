@@ -1,4 +1,9 @@
 # === Rust / Cargo ===
+/target/
+/debug/
+/release/
+/Cargo.lock
+
 /magasin/target/
 /magasin/debug/
 /magasin/release/

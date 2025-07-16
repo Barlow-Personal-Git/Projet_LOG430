@@ -9,7 +9,6 @@ mod session;
 
 use db::get_conn;
 use dotenvy::dotenv;
-use rocket::fs::{relative, FileServer};
 use rocket_dyn_templates::Template;
 use routes::routes;
 use seeds::{seed_clients, seed_inventaires, seed_produits};

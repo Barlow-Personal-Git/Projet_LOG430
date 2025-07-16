@@ -5,12 +5,9 @@ use crate::schema::inventaires::dsl::{
 };
 use crate::schema::produits::dsl::{id_produit as p_id_produit, nom as p_nom, produits};
 use diesel::prelude::*;
-use rocket::form::FromForm;
 use rocket::get;
-use rocket::serde::json::Json;
 use rocket_dyn_templates::Template;
 use serde::Serialize;
-use std::collections::HashMap;
 
 #[derive(Serialize)]
 struct AffichageProduit {

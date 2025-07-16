@@ -8,7 +8,7 @@ use diesel::prelude::*;
 use rocket::http::Status;
 use rocket::response::Redirect;
 use rocket::serde::json::Json;
-use rocket::{delete, get, post};
+use rocket::{get, post};
 use rocket_dyn_templates::Template;
 use rocket_okapi::openapi;
 use serde::Serialize;

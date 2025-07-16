@@ -43,7 +43,7 @@ pub fn afficher_vente_introuvable() {
 }
 
 pub fn afficher_transaction(transaction_id: i32) {
-    println!("Vente {} annulée.", transaction_id);
+    println!("Vente {transaction_id} annulée.");
 }
 
 pub fn afficher_vente_disponible(transaction: &crate::models::transaction::Transaction) {

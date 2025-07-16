@@ -16,7 +16,7 @@ pub fn map_transaction_produits(
     for tp in &transaction_produits {
         grouped
             .entry(tp.id_transaction)
-            .or_insert(Vec::new())
+            .or_default()
             .push(tp);
     }
 

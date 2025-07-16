@@ -47,7 +47,7 @@ fn menu_recherche_nom(conn: &mut PgConnection) {
                     }
                 }
                 Ok(_) => println!("Aucun produit trouvé."),
-                Err(e) => println!("Erreur lors de la recherche : {}", e),
+                Err(e) => println!("Erreur lors de la recherche : {e}"),
             }
         } else {
             println!("Veuillez réessayer de nouveau !");
@@ -74,7 +74,7 @@ fn menu_recherche_id(conn: &mut PgConnection) {
                     recherche_view::afficher_indisponible();
                 }
                 Err(e) => {
-                    println!("Erreur lors de la recherche : {}", e);
+                    println!("Erreur lors de la recherche : {e}");
                 }
             }
         } else {
@@ -110,7 +110,7 @@ fn menu_recherche_categorie(conn: &mut PgConnection) {
                     }
                 }
                 Ok(_) => recherche_view::afficher_indisponible(),
-                Err(e) => println!("Erreur lors de la recherche : {}", e),
+                Err(e) => println!("Erreur lors de la recherche : {e}"),
             }
         } else {
             recherche_view::afficher_erreur();

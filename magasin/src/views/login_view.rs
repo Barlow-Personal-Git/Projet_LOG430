@@ -19,5 +19,5 @@ pub fn afficher_nom_invalide() {
 }
 
 pub fn afficher_bienvenue(nom: &str) {
-    println!("Bienvenue {}", nom);
+    println!("Bienvenue {nom}");
 }

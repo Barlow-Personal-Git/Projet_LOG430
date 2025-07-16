@@ -27,7 +27,7 @@ pub async fn sync_data() -> Result<(), Box<dyn std::error::Error>> {
         magasin: nom_magasin.as_str(),
         inventaires: inv,
     };
-    let url = format!("{}/inventaires", base_url);
+    let url = format!("{base_url}/inventaires");
     client.post(&url).json(&inv_dto).send().await?;
 
     // Transaction
@@ -37,7 +37,7 @@ pub async fn sync_data() -> Result<(), Box<dyn std::error::Error>> {
         magasin: nom_magasin.as_str(),
         transactions: tr.clone(),
     };
-    let url = format!("{}/transactions", base_url);
+    let url = format!("{base_url}/transactions");
     client.post(&url).json(&tr_dto).send().await?;
 
     // Transaction_Produits
@@ -46,9 +46,8 @@ pub async fn sync_data() -> Result<(), Box<dyn std::error::Error>> {
 
     let trp_dto = map_transaction_produits(&nom_magasin, tr, trp, prods);
 
-    let url = format!("{}/transaction_produits", base_url);
+    let url = format!("{base_url}/transaction_produits");
     client.post(&url).json(&trp_dto).send().await?;
 
-    // println!("Synchronisation terminée !");
     Ok(())
 }

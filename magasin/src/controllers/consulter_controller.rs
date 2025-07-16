@@ -23,7 +23,7 @@ pub fn consulter_liste_produit() {
             }
         }
         Err(e) => {
-            eprintln!("Erreur lors de la récupération des inventaires : {}", e);
+            eprintln!("Erreur lors de la récupération des inventaires : {e}");
         }
     }
 }

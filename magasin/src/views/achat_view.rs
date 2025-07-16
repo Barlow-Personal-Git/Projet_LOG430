@@ -75,7 +75,7 @@ pub fn afficher_produit_total(
 }
 
 pub fn afficher_total(total: f64) {
-    println!("Total : {:.2}$", total);
+    println!("Total : {total:.2}$");
 }
 
 pub fn afficher_confirmer() {

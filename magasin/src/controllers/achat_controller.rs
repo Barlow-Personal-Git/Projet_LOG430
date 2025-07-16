@@ -60,7 +60,7 @@ fn ajouter_produit(conn: &mut PgConnection) {
                 continue;
             }
             Err(e) => {
-                println!("Erreur DB : {}", e);
+                println!("Erreur DB : {e}");
                 continue;
             }
         };
@@ -86,7 +86,7 @@ fn ajouter_produit(conn: &mut PgConnection) {
                 continue;
             }
             Err(e) => {
-                println!("Erreur DB : {}", e);
+                println!("Erreur DB : {e}");
                 continue;
             }
         };
@@ -117,7 +117,7 @@ fn consulter_produit(conn: &mut PgConnection) {
     let mut total_transaction: f32 = 0.0;
 
     for (produit, quantite) in &produits_liste {
-        let produit_total = *quantite as f32 * produit.prix as f32;
+        let produit_total = *quantite as f32 * produit.prix;
         total_transaction += produit_total;
         achat_view::afficher_produit_total(produit, *quantite, produit_total.into());
     }
@@ -185,7 +185,7 @@ fn confirmer_vente(conn: &mut PgConnection) {
         let mut total_transaction: f32 = 0.0;
 
         for (produit, quantite) in produits_liste {
-            let total_produit = produit.prix as f32 * quantite as f32;
+            let total_produit = produit.prix * quantite as f32;
 
             let inventaire_opt = inventaires
                 .filter(inv_id_produit.eq(produit.id_produit))
@@ -238,6 +238,6 @@ fn confirmer_vente(conn: &mut PgConnection) {
     });
 
     if let Err(e) = res {
-        println!("Erreur lors de la transaction : {:?}", e);
+        println!("Erreur lors de la transaction : {e:?}");
     }
 }

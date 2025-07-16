@@ -42,9 +42,10 @@ pub async fn login() {
                     .execute(&mut conn)
                     .expect("Erreur insertion client");
 
-                login_view::afficher_bienvenue(&format!("{} (Nouveau)", nom_utilisateur));
+                login_view::afficher_bienvenue(&format!("{nom_utilisateur} (Nouveau)"));
 
                 clients
+                    .select(Client::as_select())
                     .filter(nom.eq(&nom_utilisateur))
                     .first::<Client>(&mut conn)
                     .expect("Erreur récupération nouveau client")

@@ -35,7 +35,7 @@ async fn main() {
                     loop {
                         interval.tick().await;
                         if let Err(e) = sync_data().await {
-                            eprintln!("Erreur sync: {}", e);
+                            eprintln!("Erreur sync: {e}");
                         }
                     }
                 });

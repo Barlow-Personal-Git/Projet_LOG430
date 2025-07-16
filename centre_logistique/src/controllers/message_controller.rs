@@ -36,7 +36,7 @@ pub async fn post_message(data: Json<MessageDTO<'_>>) -> Result<String, String> 
         .map(|msg| NouveauMessage {
             id_produit: msg.id_produit,
             id_magasin: magasin_record.id_magasin,
-            message: &msg.message,
+            message: msg.message,
         })
         .collect();
 

@@ -19,8 +19,8 @@ pub async fn get_reapprovisionnements() -> Result<Json<Vec<Reapprovisionnement>>
 
     reapprovisionnements
         .load::<Reapprovisionnement>(&mut conn)
-        .map(|inv| Json(inv))
-        .map_err(|e| format!("Erreur DB : {}", e))
+        .map(Json)
+        .map_err(|e| format!("Erreur DB : {e}"))
 }
 
 #[openapi]
@@ -37,7 +37,7 @@ pub async fn post_reapprovisionnements(
         .values(&nouveau_data)
         .get_result::<Reapprovisionnement>(&mut conn)
         .map(|reappro| (Status::Created, Json(reappro)))
-        .map_err(|e| format!("Erreur insertion: {}", e))
+        .map_err(|e| format!("Erreur insertion: {e}"))
 }
 
 #[openapi]
@@ -53,7 +53,7 @@ pub async fn put_reapprovisionnement(
         .set((status.eq(update_data.status),))
         .get_result::<Reapprovisionnement>(&mut conn)
         .map(Json)
-        .map_err(|e| format!("Erreur lors de la mise à jour : {}", e))
+        .map_err(|e| format!("Erreur lors de la mise à jour : {e}"))
 }
 
 #[openapi]
@@ -67,7 +67,7 @@ pub async fn get_alerte_reapprovisionnements(
         .inner_join(produits.on(id_produit.eq(ra_produit_id)))
         .select((nom, nom_produit, ra_nbr, status, ra_created_date))
         .load::<(String, String, i32, String, chrono::NaiveDateTime)>(&mut conn)
-        .map_err(|e| format!("Erreur DB : {}", e))?;
+        .map_err(|e| format!("Erreur DB : {e}"))?;
 
     let alerte_res: Vec<AlerteReapprovisionnementDTO> = resultats
         .into_iter()

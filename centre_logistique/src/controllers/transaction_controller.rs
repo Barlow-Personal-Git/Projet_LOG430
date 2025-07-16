@@ -25,8 +25,8 @@ pub async fn get_transactions() -> Result<Json<Vec<Transaction>>, String> {
 
     transactions
         .load::<Transaction>(&mut conn)
-        .map(|inv| Json(inv))
-        .map_err(|e| format!("Erreur DB : {}", e))
+        .map(Json)
+        .map_err(|e| format!("Erreur DB : {e}"))
 }
 
 #[openapi]
@@ -37,7 +37,7 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
     let magasin_record = magasins
         .filter(nom.eq(&data.magasin))
         .first::<Magasin>(&mut conn)
-        .map_err(|e| format!("Magasin inconnu : {}", e))?;
+        .map_err(|e| format!("Magasin inconnu : {e}"))?;
 
     let new_tr: Vec<NouvelleTransaction> = data
         .transactions

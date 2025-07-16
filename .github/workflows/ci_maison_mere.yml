@@ -44,7 +44,11 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Lint with Clippy
-        run: cargo clippy -p magasin --all-targets --all-features -- -D warnings
+        run: cargo clippy -p maison_mere --all-targets --all-features -- -D warnings
 
       - name: Run tests
         run: cargo test -p maison_mere --verbose
+
+      - name: Build Docker image
+        run: |
+          docker build -t centre_logistique:latest ./maison_mere

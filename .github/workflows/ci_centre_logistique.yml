@@ -48,3 +48,7 @@ jobs:
 
       - name: Run tests
         run: cargo test -p centre_logistique --verbose
+
+      - name: Build Docker image
+        run: |
+          docker build -t centre_logistique:latest ./centre_logistique

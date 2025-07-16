@@ -12,10 +12,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends binutils libpq5 ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/src/app/target/release/magasin_enligne /usr/local/bin/magasin_enligne
+COPY --from=builder /usr/src/app/target/release/magasin /usr/local/bin/magasin
 
-RUN strip /usr/local/bin/magasin_enligne
+RUN strip /usr/local/bin/magasin
 
 EXPOSE 8000
 
-CMD ["magasin_enligne"]
+CMD ["magasin"]

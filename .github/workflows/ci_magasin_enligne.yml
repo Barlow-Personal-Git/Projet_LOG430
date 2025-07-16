@@ -48,3 +48,7 @@ jobs:
 
       - name: Run tests
         run: cargo test -p magasin_enligne --verbose
+      
+      - name: Build Docker image
+        run: |
+          docker build -t centre_logistique:latest ./magasin_enligne

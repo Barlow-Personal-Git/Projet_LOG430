@@ -1,5 +1,5 @@
-use diesel::{Queryable, Insertable};
 use crate::schema::clients;
+use diesel::{Insertable, Queryable};
 
 #[derive(Debug, Queryable, Clone)]
 pub struct Client {

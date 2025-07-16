@@ -1,11 +1,10 @@
-use diesel::prelude::*;
 use crate::db::get_conn;
-use crate::models::{produit::Produit, inventaire::Inventaire};
+use crate::models::{inventaire::Inventaire, produit::Produit};
+use crate::schema::{inventaires::dsl as i_dsl, produits::dsl as p_dsl};
 use crate::views::recherche_view;
-use crate::schema::{produits::dsl as p_dsl, inventaires::dsl as i_dsl};
+use diesel::prelude::*;
 
 pub fn menu_recherche() {
-
     let mut conn = get_conn();
 
     loop {
@@ -97,7 +96,10 @@ fn menu_recherche_categorie(conn: &mut PgConnection) {
             let resultats = i_dsl::inventaires
                 .inner_join(p_dsl::produits.on(p_dsl::id_produit.eq(i_dsl::id_produit)))
                 .filter(i_dsl::category.eq(categorie.trim()))
-                .select((i_dsl::inventaires::all_columns(), p_dsl::produits::all_columns()))
+                .select((
+                    i_dsl::inventaires::all_columns(),
+                    p_dsl::produits::all_columns(),
+                ))
                 .load::<(Inventaire, Produit)>(conn);
 
             match resultats {

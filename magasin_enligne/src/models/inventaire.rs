@@ -1,7 +1,7 @@
-use diesel::{Queryable, Insertable, Associations};
-use rocket::serde::{Serialize, Deserialize};
 use crate::models::produit::Produit;
 use crate::schema::inventaires;
+use diesel::{Associations, Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
 
 #[derive(Debug, Queryable, Associations, Serialize, Deserialize)]
 #[diesel(belongs_to(Produit, foreign_key = id_produit))]
@@ -9,7 +9,7 @@ use crate::schema::inventaires;
 pub struct Inventaire {
     pub id_inventaire: i32,
     pub id_produit: i32,
-    pub category: String,  
+    pub category: String,
     pub nbr: i32,
 }
 

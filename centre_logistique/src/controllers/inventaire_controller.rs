@@ -1,28 +1,28 @@
+use crate::cache::{INVENTAIRES_CACHE, INVENTAIRES_STRING_CACHE};
+use crate::db::get_conn;
+use crate::dto::{
+    InventaireDTO, InventaireRestantDTO, InventaireUpdateDTO, InventairesFaibleDTO,
+    InventairesSurplusDTO,
+};
+use crate::metrics::{HTTP_REQUESTS_TOTAL, HTTP_REQ_DURATION_SECONDS};
+use crate::models::inventaire::NouveauInventaire;
+use crate::models::{Inventaire, Magasin};
+use crate::schema::inventaires::dsl::{
+    id_inventaire, id_magasin as inv_id_magasin, id_produit as inv_id_produit, inventaires,
+    nbr as inv_nbr,
+};
+use crate::schema::magasins::dsl::{id_magasin, magasins, nom};
+use crate::schema::produits::dsl::{id_produit, nom as produit_nom, produits};
+use cached::Cached;
+use diesel::dsl::{sql, sum};
+use diesel::prelude::*;
+use diesel::sql_types::Integer;
+use diesel::upsert::excluded;
+use prometheus::HistogramTimer;
+use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket::{get, post, put};
 use rocket_okapi::openapi;
-use diesel::prelude::*;
-use diesel::upsert::excluded;
-use diesel::sql_types::Integer;
-use diesel::dsl::{sum, sql};
-use crate::db::get_conn;
-use crate::models::{Inventaire, Magasin};
-use crate::dto::{InventaireDTO, InventairesFaibleDTO, InventairesSurplusDTO, InventaireRestantDTO, InventaireUpdateDTO};
-use crate::models::inventaire::NouveauInventaire;
-use crate::schema::inventaires::dsl::{
-    inventaires,
-    id_produit as inv_id_produit,
-    id_magasin as inv_id_magasin,
-    nbr as inv_nbr,
-    id_inventaire,
-};
-use crate::schema::magasins::dsl::{magasins, nom, id_magasin};
-use crate::schema::produits::dsl::{produits, nom as produit_nom, id_produit};
-use crate::metrics::{HTTP_REQUESTS_TOTAL, HTTP_REQ_DURATION_SECONDS};
-use prometheus::HistogramTimer;
-use crate::cache::{INVENTAIRES_CACHE,INVENTAIRES_STRING_CACHE};
-use cached::Cached;
-use rocket::http::Status;
 use tracing::error;
 
 #[openapi]
@@ -39,7 +39,6 @@ pub async fn get_inventaires() -> Result<Json<Vec<Inventaire>>, String> {
 #[openapi]
 #[get("/inventaires/<id>")]
 pub async fn get_inventaires_id(id: i32) -> Result<Json<Inventaire>, Status> {
-    
     let mut cache = INVENTAIRES_CACHE.lock().unwrap();
 
     if let Some(cached_inv) = cache.cache_get(&id) {
@@ -48,7 +47,10 @@ pub async fn get_inventaires_id(id: i32) -> Result<Json<Inventaire>, Status> {
 
     let mut conn = get_conn();
 
-    match inventaires.filter(id_inventaire.eq(id)).first::<Inventaire>(&mut conn) {
+    match inventaires
+        .filter(id_inventaire.eq(id))
+        .first::<Inventaire>(&mut conn)
+    {
         Ok(inventaire) => {
             cache.cache_set(id, inventaire.clone());
             HTTP_REQUESTS_TOTAL.with_label_values(&["200"]).inc();
@@ -67,8 +69,9 @@ pub async fn get_inventaires_id(id: i32) -> Result<Json<Inventaire>, Status> {
 
 #[openapi]
 #[get("/inventaires?<id_magasins>")]
-pub async fn get_inventaires_par_magasins(id_magasins: Option<&str>) -> Result<Json<Vec<Inventaire>>, Status> {
-    
+pub async fn get_inventaires_par_magasins(
+    id_magasins: Option<&str>,
+) -> Result<Json<Vec<Inventaire>>, Status> {
     let mut cache = INVENTAIRES_STRING_CACHE.lock().unwrap();
     let timer: HistogramTimer = HTTP_REQ_DURATION_SECONDS.start_timer();
 
@@ -93,7 +96,9 @@ pub async fn get_inventaires_par_magasins(id_magasins: Option<&str>) -> Result<J
     let query = if magasin_ids.is_empty() {
         inventaires.into_boxed()
     } else {
-        inventaires.into_boxed().filter(inv_id_magasin.eq_any(magasin_ids))
+        inventaires
+            .into_boxed()
+            .filter(inv_id_magasin.eq_any(magasin_ids))
     };
 
     let resultats = match query.load::<Inventaire>(&mut conn) {
@@ -124,7 +129,7 @@ pub async fn put_inventaire(data: Json<InventaireUpdateDTO>) -> Result<String, S
     diesel::update(
         inventaires
             .filter(inv_id_produit.eq(update_data.id_produit))
-            .filter(inv_id_magasin.eq(update_data.id_magasin))
+            .filter(inv_id_magasin.eq(update_data.id_magasin)),
     )
     .set(inv_nbr.eq(sql::<Integer>(&format!("nbr + {}", update_data.nbr))))
     .execute(&mut conn)
@@ -142,22 +147,23 @@ pub async fn post_inventaires(data: Json<InventaireDTO<'_>>) -> Result<String, S
         .filter(nom.eq(&data.magasin))
         .first::<Magasin>(&mut conn)
         .map_err(|e| format!("Magasin inconnu : {}", e))?;
-    
-    let new_inv: Vec<NouveauInventaire> = data.inventaires.iter()
+
+    let new_inv: Vec<NouveauInventaire> = data
+        .inventaires
+        .iter()
         .map(|inv| NouveauInventaire {
             id_produit: inv.id_produit,
             id_magasin: magasin_record.id_magasin,
             category: &inv.category,
             nbr: inv.nbr,
-    }).collect();
+        })
+        .collect();
 
     diesel::insert_into(inventaires)
         .values(&new_inv)
         .on_conflict((inv_id_produit, inv_id_magasin))
         .do_update()
-        .set((
-            inv_nbr.eq(excluded(inv_nbr)),
-        ))
+        .set((inv_nbr.eq(excluded(inv_nbr)),))
         .execute(&mut conn)
         .map_err(|e| format!("Erreur insertion: {}", e))?;
 
@@ -178,15 +184,17 @@ pub async fn get_inventaires_faible() -> Result<Json<Vec<InventairesFaibleDTO>>,
         .order(nom.asc())
         .load::<(String, String, i32)>(&mut conn)
         .map_err(|e| format!("Erreur DB : {}", e))?;
-    
+
     let inv_faible: Vec<InventairesFaibleDTO> = resultats
         .into_iter()
-        .map(|(nom_value, produit_nom_value, inv_nbr_value)| InventairesFaibleDTO {
-            nom: nom_value,
-            produit_nom: produit_nom_value,
-            inv_nbr: inv_nbr_value
-    })
-    .collect();
+        .map(
+            |(nom_value, produit_nom_value, inv_nbr_value)| InventairesFaibleDTO {
+                nom: nom_value,
+                produit_nom: produit_nom_value,
+                inv_nbr: inv_nbr_value,
+            },
+        )
+        .collect();
 
     Ok(Json(inv_faible))
 }
@@ -205,14 +213,16 @@ pub async fn get_inventaires_surplus() -> Result<Json<Vec<InventairesSurplusDTO>
         .order(nom.asc())
         .load::<(String, String, i32)>(&mut conn)
         .map_err(|e| format!("Erreur DB : {}", e))?;
-    
+
     let inv_surplus: Vec<InventairesSurplusDTO> = resultats
         .into_iter()
-        .map(|(nom_value, produit_nom_value, inv_nbr_value)| InventairesSurplusDTO {
-            nom: nom_value,
-            produit_nom: produit_nom_value,
-            inv_nbr: inv_nbr_value
-        })
+        .map(
+            |(nom_value, produit_nom_value, inv_nbr_value)| InventairesSurplusDTO {
+                nom: nom_value,
+                produit_nom: produit_nom_value,
+                inv_nbr: inv_nbr_value,
+            },
+        )
         .collect();
 
     Ok(Json(inv_surplus))
@@ -229,7 +239,7 @@ pub async fn get_inventaires_restants() -> Result<Json<Vec<InventaireRestantDTO>
         .select((produit_nom, sum(inv_nbr)))
         .load::<(String, Option<i64>)>(&mut conn)
         .map_err(|e| format!("Erreur DB : {}", e))?;
-    
+
     let inv_restant: Vec<InventaireRestantDTO> = resultats
         .into_iter()
         .map(|(pro_nom, somme)| InventaireRestantDTO {

@@ -25,7 +25,9 @@ pub fn demander_choix() -> String {
 }
 
 pub fn afficher_ajouter_produit() {
-    println!("\nVeuillez inscrire l'identifiant du produit ou taper 'Back' pour retourner en arrière");
+    println!(
+        "\nVeuillez inscrire l'identifiant du produit ou taper 'Back' pour retourner en arrière"
+    );
 }
 
 pub fn demander_choix_ajouter() -> String {
@@ -64,7 +66,11 @@ pub fn afficher_ventes() {
     println!("---- Ventes ----");
 }
 
-pub fn afficher_produit_total(produit: &crate::models::produit::Produit, nbr: u32, produit_total: f64) {
+pub fn afficher_produit_total(
+    produit: &crate::models::produit::Produit,
+    nbr: u32,
+    produit_total: f64,
+) {
     println!("- {} x{} = {:.2}$", produit.nom, nbr, produit_total);
 }
 

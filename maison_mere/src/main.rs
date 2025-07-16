@@ -2,9 +2,9 @@ mod controllers;
 mod routes;
 
 use dotenvy::dotenv;
-use routes::routes;
+use rocket::fs::{relative, FileServer};
 use rocket_dyn_templates::Template;
-use rocket::fs::{FileServer, relative};
+use routes::routes;
 use std::env;
 
 #[rocket::main]

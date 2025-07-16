@@ -1,11 +1,11 @@
-use chrono::NaiveDateTime;
-use diesel::prelude::*;
-use diesel::sql_types::{Text, Nullable, Float};
-use diesel::{Queryable, Insertable, Associations};
-use rocket::serde::{Serialize, Deserialize};
-use schemars::JsonSchema;
 use crate::models::magasin::Magasin;
 use crate::schema::transactions;
+use chrono::NaiveDateTime;
+use diesel::prelude::*;
+use diesel::sql_types::{Float, Nullable, Text};
+use diesel::{Associations, Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
 
 #[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone, JsonSchema)]
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]
@@ -23,7 +23,7 @@ pub struct Transaction {
 pub struct NouvelleTransaction {
     pub id_magasin: i32,
     pub total: f32,
-    
+
     #[diesel(sql_type = Timestamp)]
     pub created_date: NaiveDateTime,
 

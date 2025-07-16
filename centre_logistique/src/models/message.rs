@@ -1,9 +1,9 @@
-use diesel::{Queryable, Insertable, Associations};
-use rocket::serde::{Serialize, Deserialize};
-use schemars::JsonSchema;
-use crate::models::produit::Produit;
 use crate::models::magasin::Magasin;
+use crate::models::produit::Produit;
 use crate::schema::messages;
+use diesel::{Associations, Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
 
 #[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone, JsonSchema)]
 #[diesel(belongs_to(Produit, foreign_key = id_produit))]
@@ -13,7 +13,7 @@ pub struct Message {
     pub id_message: i32,
     pub id_produit: i32,
     pub id_magasin: i32,
-    pub message: String,  
+    pub message: String,
 }
 
 #[derive(Insertable, JsonSchema)]

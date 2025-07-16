@@ -1,12 +1,8 @@
 use rocket::{routes, Route};
 
 use crate::controllers::{
-    login_controller::*,
-    home_controller::*,
-    menu_controller::*,
-    recherche_controller::*,
-    produit_controller::*,
-    achat_controller::*,
+    achat_controller::*, home_controller::*, login_controller::*, menu_controller::*,
+    produit_controller::*, recherche_controller::*,
 };
 
 pub fn routes() -> Vec<Route> {

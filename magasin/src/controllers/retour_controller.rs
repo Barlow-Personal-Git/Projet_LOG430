@@ -1,13 +1,11 @@
-use diesel::prelude::*;
 use crate::db::get_conn;
 use crate::models::{
-    inventaire::Inventaire,
-    transaction::Transaction,
-    transaction_produit::TransactionProduit,
+    inventaire::Inventaire, transaction::Transaction, transaction_produit::TransactionProduit,
 };
 use crate::schema::produits;
 use crate::session::client_session::CLIENT_SESSION;
 use crate::views::retour_view;
+use diesel::prelude::*;
 
 pub fn menu_retour() -> Result<(), diesel::result::Error> {
     let mut conn = get_conn();
@@ -29,7 +27,6 @@ pub fn menu_retour() -> Result<(), diesel::result::Error> {
     }
     Ok(())
 }
-
 
 fn retourner_transaction(conn: &mut PgConnection) -> Result<(), diesel::result::Error> {
     retour_view::afficher_vente_retour();
@@ -57,7 +54,7 @@ fn retourner_transaction(conn: &mut PgConnection) -> Result<(), diesel::result::
     };
     drop(session);
 
-    use crate::schema::{transactions, transaction_produits, inventaires};
+    use crate::schema::{inventaires, transaction_produits, transactions};
 
     let transaction_opt = transactions::table
         .filter(transactions::id_transaction.eq(transaction_id))
@@ -99,8 +96,7 @@ fn retourner_transaction(conn: &mut PgConnection) -> Result<(), diesel::result::
                 .execute(conn)?;
         }
 
-        diesel::delete(transactions::table.find(transaction.id_transaction))
-            .execute(conn)?;
+        diesel::delete(transactions::table.find(transaction.id_transaction)).execute(conn)?;
 
         Ok(())
     })?;
@@ -108,7 +104,6 @@ fn retourner_transaction(conn: &mut PgConnection) -> Result<(), diesel::result::
     retour_view::afficher_transaction(transaction_id);
     Ok(())
 }
-
 
 fn consulter_vente(conn: &mut PgConnection) -> Result<(), diesel::result::Error> {
     let session = CLIENT_SESSION.lock().unwrap();

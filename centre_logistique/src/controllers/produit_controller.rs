@@ -1,17 +1,19 @@
+use crate::cache::PRODUITS_CACHE;
+use crate::db::get_conn;
+use crate::dto::ProduitUpdateDTO;
+use crate::metrics::{HTTP_REQUESTS_TOTAL, HTTP_REQ_DURATION_SECONDS};
+use crate::models::produit::Produit;
+use crate::schema::produits::dsl::{
+    description as p_description, nom as p_nom, prix as p_prix, produits,
+};
+use cached::Cached;
+use diesel::prelude::*;
+use prometheus::HistogramTimer;
+use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket::{get, put};
 use rocket_okapi::openapi;
-use diesel::prelude::*;
-use crate::db::get_conn;
-use crate::models::produit::Produit;
-use crate::schema::produits::dsl::{produits,nom as p_nom, prix as p_prix, description as p_description};
-use crate::dto::ProduitUpdateDTO;
-use crate::metrics::{HTTP_REQUESTS_TOTAL, HTTP_REQ_DURATION_SECONDS};
-use prometheus::HistogramTimer;
-use tracing::{info, error};
-use crate::cache::PRODUITS_CACHE;
-use cached::Cached;
-use rocket::http::Status;
+use tracing::{error, info};
 
 #[openapi]
 #[get("/produits")]
@@ -33,7 +35,8 @@ pub async fn get_produit(id: i32) -> Result<Json<Produit>, String> {
     }
 
     let mut conn = get_conn();
-    let produit = produits.find(id)
+    let produit = produits
+        .find(id)
         .first::<Produit>(&mut conn)
         .map_err(|e| format!("Erreur lecture produit : {}", e))?;
 
@@ -42,11 +45,12 @@ pub async fn get_produit(id: i32) -> Result<Json<Produit>, String> {
     Ok(Json(produit))
 }
 
-
 #[openapi]
 #[put("/produits/<id>", data = "<data_update>")]
-pub async fn put_produit(id: i32, data_update: Json<ProduitUpdateDTO>) -> Result<Json<Produit>, Status> {
-    
+pub async fn put_produit(
+    id: i32,
+    data_update: Json<ProduitUpdateDTO>,
+) -> Result<Json<Produit>, Status> {
     let timer: HistogramTimer = HTTP_REQ_DURATION_SECONDS.start_timer();
 
     let mut conn = get_conn();
@@ -58,7 +62,7 @@ pub async fn put_produit(id: i32, data_update: Json<ProduitUpdateDTO>) -> Result
             p_description.eq(&data_update.description),
         ))
         .get_result::<Produit>(&mut conn);
-        
+
     match resultat {
         Ok(produit) => {
             let mut cache = PRODUITS_CACHE.lock().unwrap();

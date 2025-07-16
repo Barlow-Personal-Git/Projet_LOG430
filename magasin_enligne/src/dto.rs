@@ -1,8 +1,8 @@
-use rocket::serde::{Deserialize, Serialize};
-use schemars::JsonSchema;
 use chrono::NaiveDateTime;
 use diesel::Queryable;
 use rocket::form::FromForm;
+use rocket::serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
 
 #[derive(Queryable, Debug, Clone, Serialize, Deserialize, JsonSchema, FromForm)]
 #[serde(crate = "rocket::serde")]

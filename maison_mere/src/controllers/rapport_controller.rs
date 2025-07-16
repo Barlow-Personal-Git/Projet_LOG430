@@ -1,11 +1,11 @@
-use rocket::{Request, Response};
+use genpdf::{elements, Document};
+use reqwest::Client;
 use rocket::http::{ContentType, Status};
 use rocket::response::Responder;
-use std::io::Cursor;
-use std::env;
-use reqwest::Client;
-use genpdf::{Document, elements};
+use rocket::{Request, Response};
 use serde::Deserialize;
+use std::env;
+use std::io::Cursor;
 
 #[derive(Deserialize)]
 struct VenteParMagasin {
@@ -52,7 +52,9 @@ async fn fetch_produits_vendus(base_url: &str) -> Result<Vec<ProduitVendu>, reqw
     resp.json::<Vec<ProduitVendu>>().await
 }
 
-async fn fetch_inventaires_restants(base_url: &str) -> Result<Vec<InventaireRestants>, reqwest::Error> {
+async fn fetch_inventaires_restants(
+    base_url: &str,
+) -> Result<Vec<InventaireRestants>, reqwest::Error> {
     let client = Client::new();
     let url = format!("{}/inventaires_restants", base_url);
     let resp = client.get(&url).send().await?;
@@ -84,33 +86,41 @@ pub async fn rapport() -> Result<PdfResponse, Status> {
         Status::InternalServerError
     })?;
 
-    let font_family = genpdf::fonts::from_files("./fonts", "LiberationSans", None)
-        .map_err(|e| {
+    let font_family =
+        genpdf::fonts::from_files("./fonts", "LiberationSans", None).map_err(|e| {
             eprintln!("Erreur chargement police: {}", e);
             Status::InternalServerError
         })?;
-    
+
     let mut doc = Document::new(font_family);
     doc.set_title("Rapport ventes par magasin");
 
     doc.push(elements::Paragraph::new("Ventes par magasin :"));
     for vente in ventes {
-        doc.push(elements::Paragraph::new(format!("{} : {:.2} $", vente.magasin, vente.total)));
+        doc.push(elements::Paragraph::new(format!(
+            "{} : {:.2} $",
+            vente.magasin, vente.total
+        )));
     }
 
     doc.push(elements::Break::new(1));
 
     doc.push(elements::Paragraph::new("Produits vendus :"));
     for produit in produits_vendus {
-        doc.push(elements::Paragraph::new(format!("{} : {}", produit.nom_produit, produit.nbr_vendue)));
+        doc.push(elements::Paragraph::new(format!(
+            "{} : {}",
+            produit.nom_produit, produit.nbr_vendue
+        )));
     }
 
     doc.push(elements::Break::new(1));
 
-
     doc.push(elements::Paragraph::new("Inventaires restants :"));
     for inventaire in inventaires_restants {
-        doc.push(elements::Paragraph::new(format!("{} : {}", inventaire.nom_produit, inventaire.nbr_inventaire)));
+        doc.push(elements::Paragraph::new(format!(
+            "{} : {}",
+            inventaire.nom_produit, inventaire.nbr_inventaire
+        )));
     }
 
     let mut buffer = Vec::new();

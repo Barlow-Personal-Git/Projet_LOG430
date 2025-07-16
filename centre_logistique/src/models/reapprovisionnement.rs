@@ -1,10 +1,10 @@
-use chrono::NaiveDateTime;
-use diesel::{Queryable, Insertable, Associations};
-use rocket::serde::{Serialize, Deserialize};
-use schemars::JsonSchema;
 use crate::models::magasin::Magasin;
 use crate::models::produit::Produit;
 use crate::schema::reapprovisionnements;
+use chrono::NaiveDateTime;
+use diesel::{Associations, Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
 
 #[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone, JsonSchema)]
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]

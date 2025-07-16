@@ -1,6 +1,6 @@
-use serde::{Serialize, Deserialize};
 use crate::models::inventaire::Inventaire;
 use crate::models::transaction::Transaction;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct InventaireDTO<'a> {
@@ -34,5 +34,5 @@ pub struct NouvelleTransactionProduitsDTO {
 pub struct NouvelleProduitsDTO {
     pub nom: String,
     pub prix: f32,
-    pub nbr: i32
+    pub nbr: i32,
 }

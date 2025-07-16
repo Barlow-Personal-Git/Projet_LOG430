@@ -1,9 +1,9 @@
-use diesel::{Queryable, Insertable, Associations};
-use rocket::serde::{Serialize, Deserialize};
-use serde_json::Value;
-use schemars::JsonSchema;
 use crate::models::magasin::Magasin;
 use crate::schema::transaction_produits;
+use diesel::{Associations, Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
+use serde_json::Value;
 
 #[derive(Debug, Queryable, Associations, Serialize, Deserialize, Clone, JsonSchema)]
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]

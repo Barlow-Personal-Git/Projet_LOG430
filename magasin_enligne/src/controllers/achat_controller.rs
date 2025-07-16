@@ -1,18 +1,18 @@
-use rocket::{get, post, delete};
-use rocket::serde::json::Json;
+use crate::db::get_conn;
+use crate::dto::TransactionDTO;
+use crate::models::produit::Produit;
+use crate::models::transaction::NouvelleTransaction;
+use crate::schema::produits::dsl::{id_produit, produits};
+use crate::session::client_session::CLIENT_SESSION;
+use diesel::prelude::*;
 use rocket::http::Status;
+use rocket::response::Redirect;
+use rocket::serde::json::Json;
+use rocket::{delete, get, post};
+use rocket_dyn_templates::Template;
 use rocket_okapi::openapi;
 use serde::Serialize;
-use rocket_dyn_templates::Template;
-use crate::dto::TransactionDTO;
-use crate::session::client_session::CLIENT_SESSION;
-use crate::db::get_conn;
-use crate::models::produit::Produit;
-use crate::schema::produits::dsl::{produits, id_produit};
 use std::collections::HashMap;
-use diesel::prelude::*;
-use rocket::response::Redirect;
-use crate::models::transaction::NouvelleTransaction;
 
 #[derive(Serialize)]
 struct PanierItem {
@@ -32,14 +32,14 @@ struct PanierContext {
 pub fn get_panier() -> Template {
     let session = CLIENT_SESSION.lock().unwrap();
     let produits_vente = session.get_produits();
-    
+
     let produits_affichage: Vec<PanierItem> = produits_vente
         .into_iter()
         .map(|(produit, nbr)| PanierItem {
             nom: produit.nom,
             prix: format!("{:.2}", produit.prix),
             nbr,
-            total: format!("{:.2}", produit.prix * nbr as f32) ,
+            total: format!("{:.2}", produit.prix * nbr as f32),
         })
         .collect();
 
@@ -62,7 +62,7 @@ pub fn get_panier() -> Template {
 pub fn delete_panier() -> Redirect {
     let mut session = CLIENT_SESSION.lock().unwrap();
     session.clear_vente();
-     Redirect::to("/panier")
+    Redirect::to("/panier")
 }
 
 #[openapi]
@@ -81,7 +81,7 @@ pub fn post_panier(data: Json<TransactionDTO>) -> Status {
             let mut session = CLIENT_SESSION.lock().unwrap();
             session.add_produit(produit, nbr);
             Status::Ok
-        },
+        }
         Err(_) => Status::NotFound,
     }
 }
@@ -105,7 +105,8 @@ pub fn confirmer_achat() -> Result<Json<String>, Status> {
 
     let mut conn = get_conn();
 
-    let total_montant: f32 = produits_vente.iter()
+    let total_montant: f32 = produits_vente
+        .iter()
         .map(|(produit, nbr)| produit.prix * (*nbr as f32))
         .sum();
 
@@ -129,4 +130,3 @@ pub fn confirmer_achat() -> Result<Json<String>, Status> {
 
     Ok(Json("Commande validée avec succès.".to_string()))
 }
-

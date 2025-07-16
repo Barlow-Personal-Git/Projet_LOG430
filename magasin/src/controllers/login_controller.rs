@@ -1,11 +1,11 @@
-use crate::session::client_session::CLIENT_SESSION;
-use crate::models::client::{Client, NouveauClient};
 use crate::db::get_conn;
+use crate::models::client::{Client, NouveauClient};
+use crate::session::client_session::CLIENT_SESSION;
 use crate::views::login_view;
 
 use diesel::prelude::*;
-use diesel::RunQueryDsl;
 use diesel::ExpressionMethods;
+use diesel::RunQueryDsl;
 
 pub async fn login() {
     login_view::afficher_bienvenue_magasin();
@@ -13,9 +13,9 @@ pub async fn login() {
     let mut conn = get_conn();
 
     loop {
-        let nom_utilisateur  = login_view::demander_nom();
+        let nom_utilisateur = login_view::demander_nom();
 
-        if nom_utilisateur .trim().is_empty() {
+        if nom_utilisateur.trim().is_empty() {
             login_view::afficher_nom_invalide();
             continue;
         }
@@ -43,7 +43,7 @@ pub async fn login() {
                     .expect("Erreur insertion client");
 
                 login_view::afficher_bienvenue(&format!("{} (Nouveau)", nom_utilisateur));
-                
+
                 clients
                     .filter(nom.eq(&nom_utilisateur))
                     .first::<Client>(&mut conn)

@@ -1,8 +1,8 @@
-use diesel::{Queryable, Insertable, Associations};
-use rocket::serde::{Serialize, Deserialize};
 use crate::models::produit::Produit;
 use crate::models::transaction::Transaction;
 use crate::schema::transaction_produits;
+use diesel::{Associations, Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
 
 #[derive(Debug, Queryable, Associations, Serialize, Deserialize)]
 #[diesel(belongs_to(Transaction, foreign_key = id_transaction))]

@@ -1,6 +1,6 @@
-use diesel::{Queryable, Insertable};
-use rocket::serde::{Serialize, Deserialize};
 use crate::schema::produits;
+use diesel::{Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
 
 #[derive(Debug, Queryable, Clone, Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]

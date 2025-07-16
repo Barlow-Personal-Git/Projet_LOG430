@@ -1,24 +1,22 @@
+use crate::db::get_conn;
+use crate::dto::{TendancesHebdoDTO, TransactionDTO};
+use crate::metrics::{HTTP_REQUESTS_TOTAL, HTTP_REQ_DURATION_SECONDS};
+use crate::models::transaction::{NouvelleTransaction, TendancesHebdoSQL};
+use crate::models::{Magasin, Transaction};
+use crate::schema::magasins::dsl::{magasins, nom};
+use crate::schema::transactions::dsl::{
+    created_date as trans_created_date, id_magasin as trans_id_magasin, total as trans_total,
+    transactions,
+};
+use diesel::prelude::*;
+use diesel::sql_query;
+use diesel::upsert::excluded;
+use prometheus::HistogramTimer;
+use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket::{get, post};
 use rocket_okapi::openapi;
-use diesel::sql_query;
-use diesel::prelude::*;
-use diesel::upsert::excluded;
-use crate::db::get_conn;
-use crate::models::{Transaction, Magasin};
-use crate::dto::{TransactionDTO, TendancesHebdoDTO};
-use crate::models::transaction::{NouvelleTransaction, TendancesHebdoSQL};
-use crate::schema::transactions::dsl::{
-    transactions,
-    id_magasin as trans_id_magasin,
-    total as trans_total,
-    created_date as trans_created_date
-};
-use crate::schema::magasins::dsl::{magasins, nom};
-use crate::metrics::{HTTP_REQUESTS_TOTAL, HTTP_REQ_DURATION_SECONDS};
-use prometheus::HistogramTimer;
-use tracing::{info, error};
-use rocket::http::Status;
+use tracing::{error, info};
 
 #[openapi]
 #[get("/transactions")]
@@ -40,22 +38,23 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
         .filter(nom.eq(&data.magasin))
         .first::<Magasin>(&mut conn)
         .map_err(|e| format!("Magasin inconnu : {}", e))?;
-    
-    let new_tr: Vec<NouvelleTransaction> = data.transactions.iter()
+
+    let new_tr: Vec<NouvelleTransaction> = data
+        .transactions
+        .iter()
         .map(|tr| NouvelleTransaction {
             id_magasin: magasin_record.id_magasin,
             total: tr.total,
             created_date: tr.created_date,
-            updated_date: tr.updated_date
-    }).collect();
+            updated_date: tr.updated_date,
+        })
+        .collect();
 
     diesel::insert_into(transactions)
         .values(&new_tr)
         .on_conflict((trans_id_magasin, trans_created_date))
         .do_update()
-        .set(
-            trans_total.eq(excluded(trans_total))
-        )
+        .set(trans_total.eq(excluded(trans_total)))
         .execute(&mut conn)
         .map_err(|e| format!("Erreur insertion transaction_produits: {}", e))?;
 
@@ -65,7 +64,6 @@ pub async fn post_transaction(data: Json<TransactionDTO<'_>>) -> Result<String, 
 #[openapi]
 #[get("/tendances_hebdomadaires")]
 pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>>, Status> {
-    
     let timer: HistogramTimer = HTTP_REQ_DURATION_SECONDS.start_timer();
 
     let mut conn = get_conn();
@@ -91,8 +89,8 @@ pub async fn get_tendances_hebdomadaires() -> Result<Json<Vec<TendancesHebdoDTO>
             magasin: res_query.nom,
             semaine: res_query.semaine,
             total: res_query.total.unwrap_or(0.0),
-    })
-    .collect();
+        })
+        .collect();
     info!("Générer la tendance hebdomadaires {:?}", tendances);
 
     HTTP_REQUESTS_TOTAL.with_label_values(&["200"]).inc();

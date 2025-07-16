@@ -1,22 +1,21 @@
 mod controllers;
 mod db;
 mod dto;
-mod views;
 mod mappers;
 mod models;
 mod schema;
-mod session;
 mod seeds;
+mod session;
+mod views;
 
+use controllers::synchroniser_controller::sync_data;
+use db::get_conn;
 use seeds::{seed_clients, seed_inventaires, seed_produits};
 use std::env;
 use std::time::Duration;
-use db::get_conn;
-use controllers::synchroniser_controller::sync_data;
 
 #[tokio::main]
-async fn main(){
-
+async fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() > 1 {
@@ -30,7 +29,7 @@ async fn main(){
             }
             "login" => {
                 controllers::login_controller::login().await;
-                
+
                 tokio::spawn(async {
                     let mut interval = tokio::time::interval(Duration::from_secs(30));
                     loop {

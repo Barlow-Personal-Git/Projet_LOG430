@@ -1,8 +1,8 @@
-use chrono::NaiveDateTime;
-use diesel::{Queryable, Insertable, Associations};
-use rocket::serde::{Serialize, Deserialize};
 use crate::models::client::Client;
 use crate::schema::transactions;
+use chrono::NaiveDateTime;
+use diesel::{Associations, Insertable, Queryable};
+use rocket::serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Queryable, Associations, Serialize, Deserialize)]
 #[diesel(belongs_to(Client, foreign_key = id_client))]
@@ -20,7 +20,7 @@ pub struct Transaction {
 pub struct NouvelleTransaction {
     pub id_client: i32,
     pub total: f32,
-    
+
     #[diesel(sql_type = Timestamp)]
     pub created_date: NaiveDateTime,
 

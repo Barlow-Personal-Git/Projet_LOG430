@@ -1,7 +1,7 @@
-use diesel::{Queryable, Insertable};
-use serde::{Deserialize, Serialize};
 use crate::schema::clients;
+use diesel::{Insertable, Queryable};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Queryable, Clone, Deserialize, Serialize, JsonSchema)]
 pub struct Client {

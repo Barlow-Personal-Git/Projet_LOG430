@@ -47,5 +47,8 @@ pub fn afficher_transaction(transaction_id: i32) {
 }
 
 pub fn afficher_vente_disponible(transaction: &crate::models::transaction::Transaction) {
-    println!("ID : {} | Total: {:.2}$", transaction.id_transaction, transaction.total);
+    println!(
+        "ID : {} | Total: {:.2}$",
+        transaction.id_transaction, transaction.total
+    );
 }

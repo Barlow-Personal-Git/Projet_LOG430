@@ -1,18 +1,20 @@
+use crate::db::get_conn;
 use crate::models::{
-    produit::Produit,
     inventaire::Inventaire,
-    transaction::{Transaction, NouvelleTransaction},
+    produit::Produit,
+    transaction::{NouvelleTransaction, Transaction},
     transaction_produit::NouveauTransactionProduit,
 };
-use diesel::prelude::*;
+use crate::schema::inventaires::dsl::{id_produit as inv_id_produit, inventaires, nbr as inv_nbr};
 use crate::schema::produits::dsl::*;
-use crate::schema::inventaires::dsl::{inventaires, id_produit as inv_id_produit, nbr as inv_nbr};
-use crate::schema::transactions::dsl::{transactions, id_transaction as trans_id_transaction, total as trans_total};
-use crate::schema::transaction_produits::dsl::{transaction_produits};
-use crate::views::achat_view;
+use crate::schema::transaction_produits::dsl::transaction_produits;
+use crate::schema::transactions::dsl::{
+    id_transaction as trans_id_transaction, total as trans_total, transactions,
+};
 use crate::session::client_session::CLIENT_SESSION;
-use crate::db::get_conn;
+use crate::views::achat_view;
 use chrono::Utc;
+use diesel::prelude::*;
 
 pub fn menu_achat() {
     let mut conn = get_conn();

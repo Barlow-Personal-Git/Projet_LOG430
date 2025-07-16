@@ -1,6 +1,6 @@
+use chrono::NaiveDateTime;
 use rocket::serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
-use chrono::NaiveDateTime;
 
 #[derive(Debug, Clone, Deserialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]

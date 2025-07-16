@@ -1,18 +1,18 @@
+mod controllers;
 mod db;
 mod dto;
 mod models;
-mod controllers;
 mod routes;
-mod seeds;
 mod schema;
+mod seeds;
 mod session;
 
 use db::get_conn;
 use dotenvy::dotenv;
-use routes::routes;
+use rocket::fs::{relative, FileServer};
 use rocket_dyn_templates::Template;
-use rocket::fs::{FileServer, relative};
-use seeds::{seed_inventaires, seed_clients, seed_produits};
+use routes::routes;
+use seeds::{seed_clients, seed_inventaires, seed_produits};
 use std::env;
 
 #[rocket::main]

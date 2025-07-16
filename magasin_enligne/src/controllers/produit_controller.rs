@@ -1,14 +1,16 @@
+use crate::db::get_conn;
+use crate::models::produit::Produit;
+use crate::schema::inventaires::dsl::{
+    category as i_category, id_produit as i_id_produit, inventaires,
+};
+use crate::schema::produits::dsl::{id_produit as p_id_produit, nom as p_nom, produits};
+use diesel::prelude::*;
+use rocket::form::FromForm;
 use rocket::get;
 use rocket::serde::json::Json;
 use rocket_dyn_templates::Template;
-use std::collections::HashMap;
-use rocket::form::FromForm;
 use serde::Serialize;
-use diesel::prelude::*;
-use crate::db::get_conn;
-use crate::models::produit::Produit;
-use crate::schema::produits::dsl::{produits, id_produit as p_id_produit, nom as p_nom};
-use crate::schema::inventaires::dsl::{inventaires, category as i_category, id_produit as i_id_produit};
+use std::collections::HashMap;
 
 #[derive(Serialize)]
 struct AffichageProduit {
@@ -26,7 +28,7 @@ struct ProduitContext<'a> {
 
 #[get("/produit?<id_produit>&<nom>&<categorie>")]
 pub fn get_produit(
-    id_produit: Option<i32>, 
+    id_produit: Option<i32>,
     nom: Option<String>,
     categorie: Option<String>,
 ) -> Template {
@@ -37,7 +39,7 @@ pub fn get_produit(
             .filter(p_id_produit.eq(id_val))
             .load::<Produit>(&mut conn)
             .ok()
-    } else if let Some(nom_val) = nom  {
+    } else if let Some(nom_val) = nom {
         produits
             .filter(p_nom.ilike(format!("%{}%", nom_val)))
             .load::<Produit>(&mut conn)
@@ -50,27 +52,36 @@ pub fn get_produit(
             .load::<Produit>(&mut conn)
             .ok()
     } else {
-        produits
-            .load::<Produit>(&mut conn)
-            .ok()
+        produits.load::<Produit>(&mut conn).ok()
     };
 
     let context = if let Some(prods) = resultats {
         if prods.is_empty() {
-            ProduitContext { message: Some("Aucun produit trouvé"), resultats: None }
+            ProduitContext {
+                message: Some("Aucun produit trouvé"),
+                resultats: None,
+            }
         } else {
+            let p_affichage = prods
+                .into_iter()
+                .map(|p| AffichageProduit {
+                    id_produit: p.id_produit,
+                    nom: p.nom,
+                    description: Some(p.description),
+                    prix_decimal: format!("{:.2}", p.prix),
+                })
+                .collect();
 
-            let p_affichage = prods.into_iter().map(|p| AffichageProduit {
-                id_produit: p.id_produit,
-                nom: p.nom,
-                description: Some(p.description),
-                prix_decimal: format!("{:.2}", p.prix),
-            }).collect();
-
-            ProduitContext { message: None, resultats: Some(p_affichage) }
+            ProduitContext {
+                message: None,
+                resultats: Some(p_affichage),
+            }
         }
     } else {
-        ProduitContext { message: Some("Erreur lors de la recherche"), resultats: None }
+        ProduitContext {
+            message: Some("Erreur lors de la recherche"),
+            resultats: None,
+        }
     };
 
     Template::render("produit", &context)

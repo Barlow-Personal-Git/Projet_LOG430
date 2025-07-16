@@ -1,5 +1,5 @@
-use diesel::{Queryable, Insertable};
 use crate::schema::magasins;
+use diesel::{Insertable, Queryable};
 
 #[derive(Debug, Queryable, Clone)]
 pub struct Magasin {

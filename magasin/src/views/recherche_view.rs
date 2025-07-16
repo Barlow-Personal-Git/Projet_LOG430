@@ -26,15 +26,21 @@ pub fn demander_choix() -> String {
     io::stdout().flush().unwrap();
 
     let mut choix = String::new();
-    io::stdin().read_line(&mut choix).expect("Erreur de lecture");
+    io::stdin()
+        .read_line(&mut choix)
+        .expect("Erreur de lecture");
     choix.trim().to_string()
 }
 
 pub fn afficher_recherche_choix(recherche: &str) {
     match recherche {
-        "nom" => println!("\nInscrivez le nom du produit ou tapez 'Back' pour retourner en arrière"),
+        "nom" => {
+            println!("\nInscrivez le nom du produit ou tapez 'Back' pour retourner en arrière")
+        }
         "id" => println!("\nInscrivez l'id du produit ou tapez 'Back' pour retourner en arrière"),
-        "categorie" => println!("\nInscrivez la catégorie du produit ou tapez 'Back' pour retourner en arrière"),
+        "categorie" => println!(
+            "\nInscrivez la catégorie du produit ou tapez 'Back' pour retourner en arrière"
+        ),
         _ => (),
     }
 }
@@ -56,7 +62,9 @@ pub fn demander_recherche_choix(recherche: &str) -> String {
     io::stdout().flush().unwrap();
 
     let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Erreur de lecture");
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Erreur de lecture");
     input.trim().to_string()
 }
 
@@ -70,7 +78,10 @@ pub fn afficher_titre_produit() {
 
 /// Affiche un produit, structure attendue avec au moins ces champs : id_produit, nom, prix
 pub fn afficher_produit(p: &crate::models::produit::Produit) {
-    println!("- ID : {} | Nom : {} | Prix : ({} $)", p.id_produit, p.nom, p.prix);
+    println!(
+        "- ID : {} | Nom : {} | Prix : ({} $)",
+        p.id_produit, p.nom, p.prix
+    );
 }
 
 pub fn afficher_indisponible() {

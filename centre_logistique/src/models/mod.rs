@@ -1,6 +1,6 @@
+pub mod inventaire;
 pub mod magasin;
 pub mod message;
-pub mod inventaire;
 pub mod produit;
 pub mod reapprovisionnement;
 pub mod transaction;

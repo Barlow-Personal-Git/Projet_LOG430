@@ -1,8 +1,8 @@
-use std::collections::HashMap;
-use std::sync::Mutex;
-use once_cell::sync::Lazy;
 use crate::models::client::Client;
 use crate::models::produit::Produit;
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
+use std::sync::Mutex;
 
 #[derive(Debug)]
 pub struct ClientSession {

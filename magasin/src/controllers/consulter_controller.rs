@@ -1,10 +1,10 @@
-use diesel::prelude::*;
-use diesel::ExpressionMethods;
 use crate::db::get_conn;
 use crate::models::inventaire::Inventaire;
 use crate::models::produit::Produit;
 use crate::schema::{inventaires, produits};
 use crate::views::consulter_view;
+use diesel::prelude::*;
+use diesel::ExpressionMethods;
 
 pub fn consulter_liste_produit() {
     let mut conn = get_conn();

@@ -13,7 +13,7 @@ on:
       - '.github/workflows/ci_magasin.yml'
 
 jobs:
-  build-test-lint:
+  build-test-lint-docker:
     runs-on: ubuntu-latest
 
     steps:

@@ -5,28 +5,28 @@ package "Application de la console" {
 
   package "Présentation" {
     component "views"
-    component "app.py"
+    component "main.rs"
   }
 
   package "Logique métier" {
-    component "AchatController"
-    component "ConsulterController"
-    component "MenuController"
-    component "LoginController"
-    component "RetourController"
-    component "RechercheController"
+    component "achat_controller.rs"
+    component "consulter_controller.rs"
+    component "menu_controller.rs"
+    component "login_controller.rs"
+    component "retour_controller.rs"
+    component "recherche_controller.rs"
   }
 
   package "Persistance" {
-    component "SQLAlchemy"
+    component "Diesel ORM"
     component "PostgreSQL"
     component "Model (Produit, Client, Inventaire, Transaction)"
   }
 
-  "app.py" --> "AchatController"
-  "AchatController" --> "Model (Produit, Client, Inventaire, Transaction)"
-  "Model (Produit, Client, Inventaire, Transaction)" --> "SQLAlchemy"
-  "SQLAlchemy" --> "PostgreSQL"
+  "main.rs" --> "achat_controller.rs"
+  "achat_controller.rs" --> "Modèles (Produit, Client, Inventaire, Transaction)"
+  "Modèles (Produit, Client, Inventaire, Transaction)" --> "Diesel ORM"
+  "Diesel ORM" --> "PostgreSQL"
 }
 
 @enduml

@@ -1,13 +1,23 @@
 @startuml
-node "Magasin" as   Magasin {
-  artifact "Application Magasin\n(app.py)" as AppMagasin
+node "Magasin" as Magasin {
+  artifact "Application Magasin\n(main.rs)" as AppMagasin
+  database "PostgreSQL\n(db.rs)" as DbMagasin
+}
+node "Magasin en ligne" as MagasinEnLigne {
+  artifact "Application MagasinEnLigne\n(main.rs)" as AppMagasinEnLigne
+  database "PostgreSQL\n(db.rs)" as DbMagasinEnLigne
+}
+node "Maison mere" as MaisonMere {
+  artifact "Application MaisonMere\n(main.rs)" as AppMaisonMere
 }
 
-node "Serveur Mère" as Server {
+node "Centre logistique" as Server {
   database "PostgreSQL Centrale" as PostgresCentral
-  artifact "server.py" as ApiServeur
+  artifact "Application CentreLogistique\n(main.rs)" as AppCentreLogistique
 }
 
-Magasin --> ApiServeur : Requêtes HTTP/Synchronisation
-ApiServeur --> PostgresCentral : Accès base de données
+Magasin --> AppCentreLogistique : Requêtes HTTP/Synchronisation
+MagasinEnLigne --> AppCentreLogistique : Requêtes HTTP/Synchronisation
+MaisonMere --> AppCentreLogistique : Requêtes des données
+AppCentreLogistique --> PostgresCentral : Accès base de données
 @enduml

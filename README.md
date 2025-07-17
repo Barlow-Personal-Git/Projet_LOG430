@@ -1,133 +1,91 @@
 # Projet_LOG430
 
 Cette application comporte deux bases de données distinctes, correspondant à différents niveaux couches.
-Une couche correspond à la base de données du magasin local, et l’autre à la base de données du serveur mère. Dans l'application du magasin, le client peut rechercher des produits disponibles en magasin, acheter des produits, consulter la liste complète des produits, ainsi que retourner une vente. De plus, le magasin local met à jour ses inventaires dans la base de données mère afin que, lorsqu’un gestionnaire consulte un rapport, les données soient à jour. Le gestionnaire peut également visualiser les performances des magasins à l’aide d’un tableau de bord. Les employés du magasin, en tant qu’administrateurs, peuvent envoyer une demande d'approvisionnement pour un produit via l’application dans la catégorie `consultation`.
+Une couche correspond à la base de données du magasin local, et l’autre à la base de données du serveur centre logistique. Dans l'application du magasin, le client peut rechercher des produits disponibles en magasin, acheter des produits, consulter la liste complète des produits, ainsi que retourner une vente. De plus, le magasin local met à jour ses inventaires dans la base de données mère afin que, lorsqu’un gestionnaire consulte un rapport, les données soient à jour. Le gestionnaire peut également visualiser les performances des magasins à l’aide d’un tableau de bord. Les employés du magasin, en tant qu’administrateurs, peuvent envoyer une demande d'approvisionnement pour un produit via l’application dans la catégorie `consultation`.
 
 
 ## Prérequis
 Avant de commencer, assurez-vous d'avoir les éléments suivants :
-- Python 3.x
+- Rust
+- Cargo
+- Docker
 - PostgreSQL
 
 ## Installation
 1. Cloner le repo
 ```
-git clone https://github.com/Barlow-Personal-Git/LOG430_Barlow_Etape_1.git
+git clone https://github.com/Barlow-Personal-Git/Projet_LOG430.git
 ```
-2. Créer et activer un environnement virtuel:
-```
-python3 -m venv env
-source env/bin/activate
-```
-
-Note : Si vous avez besoin de déactive
-```
-deactive
-```
-
-3. Installer les dépendances:
-```
-pip install -r requirements.txt
-```
-
-4. Configurer PostgreSQL
-Créer une base de donnée PostgreSQL
+2. Configurer PostreSQL:
 ```
 psql -U postgres
-CREATE DATABASE log430_lab;
+CREATE DATABASE log430_magasin;
+CREATE DATABASE log430_cl;
 ```
-
-5. Configurer les variables d'environnement
-Copier le fichier d'exemple et renommez-le :
+3. Configurer les variables d'environnement
+Pour chaque sous-projet (magasin, centre_logistique, maison_mere), configurez les variables d'environnement en copiant le fichier d'exemple et en le renommant :
 ```
 cp .env-example .env
 ```
-Ensuite, ouvrez le fichier `.env` et modifiez la variable `DATABASE_URL` :
-- Remplacez `user` par le nom de votre utilisateur
-- Remplacez `password` par le mot de passe de cet utilisateur
-- Remplez `table` par le nom de votre base de données (ex.: log430_lab)
 
-Note: la base de donnée mère est aussi dans ce fichier et le nom du magasin.
-
-6. Création des tables dans la base de données
-L’exécution pour la première fois crée les tables.
+4. Création des tables
+Les migrations sont gérées via Diesel.
 ```
-python3 app.py
-ctrl + c
+cd centre_logistique
+diesel migration run
 ```
 
-7. Seed de la base de données
 ```
-python3 -m seed.run_seed
+cd magasin
+diesel migration run
 ```
 
-## Exécution
+5. Ajouter des données initiales
+```
+cd centre_logistique
+cargo run seed
+```
+
+```
+cd magasin
+cargo run seed
+```
+
+## Exécution local du magasin
 1. Exécuter le programme
 ```
-python3 app.py
+cargo run -p magasin login 
 ```
 
-## Serveur mère
-
-1. Configurer les variables d'environnement
-Copier le fichier d'exemple et renommez-le :
-```
-cd main_server
-cp .env-example .env
-```
-
-2. Configurer PostgreSQL
-Créer une base de donnée PostgreSQL
-```
-psql -U postgres
-CREATE DATABASE log430_lab_mere;
-```
-
-3. Configurer PostgreSQL
-Créer une base de donnée PostgreSQL pour la serveur mère
-```
-psql -U postgres
-createdb -U user log430_lab_mere
-```
-
-4. Créaction des tables
-Exécuter pour la première fois le programme. Assurez-vous que vous êtes n'est plus dans `main_server/`
-```
-python3 -m main_server.server 
-```
-
-5. Ajouter les données seed 
-```
-python3 -m main_server.ed.run_seed
-```
-
-## Exécution du serveur mère
+## Exécution local du magasin en ligne
 1. Exécuter le programme
 ```
-python3 -m main_server.server 
+cargo run -p magasin_enligne
 ```
-Note : Il est important que ce serveur reste toujours ouvert afin que la base de données mère soit constamment à jour et que les rapports générés contiennent les dernières données.
 
-## Générer un rapport consolidé des ventes
-Pour générer le rapport, accédez à l'URL suivante dans votre navigateur web :
+## Exécution local du centre logistique
+1. Exécuter le programme
 ```
-http://127.0.0.1:5000/rapport
+cargo run -p centre_logistique
 ```
-Notes : Le fichier PDF sera sauvegardé dans le dossier contenant le code source.
 
-## Générer un rapport consolidé des ventes
-Pour générer le rapport, accédez à l'URL suivante dans votre navigateur web :
+## Exécution local du maison mere
+1. Exécuter le programme
 ```
-http://127.0.0.1:5000/rapport
+cargo run -p maison_mere
 ```
-Notes : Le fichier PDF sera sauvegardé dans le dossier contenant le code source.
 
-## Visualiser les performances des magasins dans un tableau de bord
-Pour les performances des magasins dans un tableau de bord, accédez à l'URL suivante dans votre navigateur web :
+## Exécution des tests de stress
 ```
-http://127.0.0.1:5000/dashboard
+cd centre_logistique
+cd test_stress
+k6 run load_test_consulter_inventaire.js
+k6 run load_test_produit.js
+k6 run load_test_transaction.js
 ```
-Notes : Assurez-vous que vous avez faites des achats avec l'exécution principal
+
+## Comparaison avec et sans NGINX
+TODO
 
 
 ## Construire et lancer le conteneur à l'aide de Docker Compose

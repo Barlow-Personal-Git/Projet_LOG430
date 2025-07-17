@@ -5,7 +5,7 @@ scrape_configs:
   - job_name: 'centre_logistique'
     metrics_path: /api/metrics
     static_configs:
-    - targets: ['rocket_app_1:8000', 'rocket_app_2:8000']
+    - targets: ['centre_logistique_app_1:8000', 'centre_logistique_app_2:8000']
   
   - job_name: 'node_exporter'
     static_configs:

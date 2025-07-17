@@ -11,10 +11,15 @@ use schemars::JsonSchema;
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]
 #[serde(crate = "rocket::serde")]
 pub struct Transaction {
+    #[schemars(example = "crate::examples::exemple_id_transaction")]
     pub id_transaction: i32,
+    #[schemars(example = "crate::examples::exemple_id_magasin")]
     pub id_magasin: i32,
+    #[schemars(example = "crate::examples::exemple_total")]
     pub total: f32,
+    #[schemars(example = "crate::examples::exemple_created_date")]
     pub created_date: NaiveDateTime,
+    #[schemars(example = "crate::examples::exemple_updated_date")]
     pub updated_date: NaiveDateTime,
 }
 

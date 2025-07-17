@@ -2,6 +2,7 @@ mod cache;
 mod controllers;
 mod db;
 mod dto;
+mod examples;
 mod metrics;
 mod models;
 mod routes;

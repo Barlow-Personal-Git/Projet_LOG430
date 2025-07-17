@@ -10,10 +10,15 @@ use schemars::JsonSchema;
 #[diesel(belongs_to(Magasin, foreign_key = id_magasin))]
 #[serde(crate = "rocket::serde")]
 pub struct Inventaire {
+    #[schemars(example = "crate::examples::exemple_id_inventaire")]
     pub id_inventaire: i32,
+    #[schemars(example = "crate::examples::exemple_id_produit")]
     pub id_produit: i32,
+    #[schemars(example = "crate::examples::exemple_id_magasin")]
     pub id_magasin: i32,
+    #[schemars(example = "crate::examples::exemple_category")]
     pub category: String,
+    #[schemars(example = "crate::examples::exemple_nbr")]
     pub nbr: i32,
 }
 

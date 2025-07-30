@@ -2,7 +2,7 @@ FROM rust:1.82 AS builder
 
 WORKDIR /usr/src/app
 
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 COPY src ./src
 COPY templates ./templates
 COPY fonts ./fonts

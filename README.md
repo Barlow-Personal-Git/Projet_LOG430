@@ -157,3 +157,8 @@ Note : Pour l’instant, ce dossier contient principalement les fonctions d’en
 `PostgreSQL` : C’est une base de données relationnelle simple à utiliser et plus cohérente avec les besoins du projet qu’une base de données NoSQL.
 
 
+![alt text](docs/images/cl_part1.png)
+![alt text](docs/images/cl_part2.png)
+
+![alt text](cl_2_part1.png)
+![alt text](cl_2_part2-1.png)

@@ -3,11 +3,11 @@ import { check, sleep } from 'k6';
 
 export let options = {
   stages: [
-    { duration: '1m', target: 10 },
-    { duration: '1m', target: 20 },
-    { duration: '1m', target: 30 },
-    { duration: '1m', target: 20 },
-    { duration: '1m', target: 10 },
+    { duration: '1m', target: 1000 },
+    { duration: '1m', target: 2000 },
+    { duration: '1m', target: 3000 },
+    { duration: '1m', target: 2000 },
+    { duration: '1m', target: 1000 },
   ],
 };
 
@@ -22,7 +22,7 @@ export default function () {
         headers: { 'Content-Type': 'application/json' },
     };
 
-    let res = http.put('http://localhost:8000/produits/1', payload, params);
+    let res = http.put('http://127.0.0.1:8000/api/produits/1', payload, params);
 
     check(res, {
         'status is 200': (r) => r.status === 200,

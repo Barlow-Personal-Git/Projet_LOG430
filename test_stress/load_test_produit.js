@@ -22,7 +22,11 @@ export default function () {
         headers: { 'Content-Type': 'application/json' },
     };
 
-    let res = http.put('http://127.0.0.1:8000/api/produits/1', payload, params);
+    // Sans API Rest
+    // let res = http.put('http://127.0.0.1:8000/api/produits/1', payload, params);
+
+    // Avec Api Rest
+    let res = http.put('http://localhost:8002/centre-logistique/api/produits/1', payload, params);
 
     check(res, {
         'status is 200': (r) => r.status === 200,

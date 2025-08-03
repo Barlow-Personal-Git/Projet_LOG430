@@ -27,7 +27,7 @@ services:
       - SERVER_HOST=0.0.0.0
       - SERVER_PORT=8000
 
-  # ## Centre Logistique
+  ## Centre Logistique
   centre_logistique_app_1:
     build: ./centre_logistique
     environment:

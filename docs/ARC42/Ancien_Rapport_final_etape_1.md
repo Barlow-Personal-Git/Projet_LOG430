@@ -54,7 +54,7 @@ Les fichiers sont organisés selon leur comportement ou rôle :
 - UC6 – Générer un rapport de ventes : Un gestionnaire peut générer un rapport détaillé contenant des informations sur les magasins, les ventes et les inventaires.
 - UC7 – Visualiser les magasins dans un tableau de bord : Un gestionnaire peut consulter un tableau de bord pour avoir une vue d’ensemble de la situation des magasins.
 
-![alt text](../../images/cas_utilisation.png)
+![alt text](../images/cas_utilisation.png)
 
 # 6. Structure logique
 

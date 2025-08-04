@@ -85,7 +85,19 @@ k6 run load_test_transaction.js
 ```
 
 ## Comparaison avec et sans NGINX
-TODO
+
+Sans NGINX
+![alt text](docs/images/cl_part1.png)
+![alt text](docs/images/cl_part2.png)
+
+
+
+Avec NGINX (load balancer)
+![alt text](docs/images/cl_2_part1.png)
+![alt text](docs/images/cl_2_part2.png)
+
+
+Lors de tests réalisés avec deux instances (N=2) un load balancer, la performance de mon programme devient instable. On observe une augmentation notable de la consommation CPU et mémoire, ainsi qu'une fréquence plus élevée d'erreurs 500. Les graphes ont été générés avec Grafana. Le fichier JSON correspondant au tableau de bord est accessible dans le répertoire `docs/grafana`.
 
 
 ## Construire et lancer le conteneur à l'aide de Docker Compose
@@ -103,12 +115,46 @@ docker compose up
 ```
 Cette commande permet de lancer le conteneur basé sur l'image constuite et affiche les logs de l'application.
 
+Le programme utilise un API Gateway, après que les containers image sont up.
 
-## Illustration d'une exécusion réussie de la pipeline CI/CD
-![Illustration d'une exécusion réussie de la pipeline CI/CD](images/image-1.png)
 
-## Illustration d'une image créée automatiquement avec Docker
-![Illustration d'une image créée automatiquement avec Docker](images/image.png)
+Pour tester le fonctionnement de l'API Gateway avec Kong. (Ceci est testé dans un serveur Windows, puisque le serveur Linux n'avait pas suffisamment d'espace pour rouler le docker)
+
+Créer un upstream :
+
+```
+Invoke-RestMethod -Method Post -Uri http://localhost:8001/upstreams -Body @{ name = "centre_logistique_upstream" } -ContentType "application/x-www-form-urlencoded"
+```
+
+Ajouter les instances : 
+```
+Invoke-RestMethod -Method Post -Uri http://localhost:8001/upstreams/centre_logistique_upstream/targets -Body @{ target = "centre_logistique_app_1:8000"; weight = 100 } -ContentType "application/x-www-form-urlencoded"
+
+Invoke-RestMethod -Method Post -Uri http://localhost:8001/upstreams/centre_logistique_upstream/targets -Body @{ target = "centre_logistique_app_2:8000"; weight = 100 } -ContentType "application/x-www-form-urlencoded"
+
+```
+
+Créer un service Kong : 
+```
+Invoke-RestMethod -Method Post -Uri http://localhost:8001/services -Body @{
+    name = "centre_logistique"
+    url = "http://centre_logistique_upstream"
+} -ContentType "application/x-www-form-urlencoded"
+```
+
+Créer une route pour ce service
+```
+Invoke-RestMethod -Method Post -Uri http://localhost:8001/services/centre_logistique/routes -Body @{
+    paths = "/centre-logistique"
+    strip_path = "true"
+} -ContentType "application/x-www-form-urlencoded"
+```
+
+Exemple pour tester : 
+```
+ http://localhost:8002/centre-logistique/api/produits
+```
+
 
 # La structure de l'application
 
@@ -155,10 +201,3 @@ Note : Pour l’instant, ce dossier contient principalement les fonctions d’en
 `SQLAlchemy` : C'est un ORM pour interagir avec la base de données.
 
 `PostgreSQL` : C’est une base de données relationnelle simple à utiliser et plus cohérente avec les besoins du projet qu’une base de données NoSQL.
-
-
-![alt text](docs/images/cl_part1.png)
-![alt text](docs/images/cl_part2.png)
-
-![alt text](cl_2_part1.png)
-![alt text](cl_2_part2-1.png)

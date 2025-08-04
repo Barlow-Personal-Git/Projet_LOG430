@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y libpq-dev pkg-config build-essential
 
 WORKDIR /usr/src/app
 
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 COPY src ./src
 
 RUN cargo install diesel_cli --no-default-features --features postgres

@@ -15,6 +15,11 @@ Client --> UC2
 Client --> UC3
 Client --> UC4
 Client --> UC5
+Systeme --> UC1
+Systeme --> UC2
+Systeme --> UC3
+Systeme --> UC4
+Systeme --> UC5
 Systeme --> UC6
 Systeme --> UC7
 @enduml

@@ -1,6 +1,6 @@
 @startuml
 actor "Client" as Client
-actor "Système mère" as Systeme
+actor "Employeur" as Systeme
 
 usecase "Rechercher un produit" as UC1
 usecase "Acheter un produit" as UC2

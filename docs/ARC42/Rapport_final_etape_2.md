@@ -2,7 +2,11 @@ Lien de mon repos : https://github.com/Barlow-Personal-Git/Projet_LOG430
 
 # 1. Introduction et objectifs
 
-Ce projet est une application de gestion d'inventaire pour un réseau de magasins, dans le cadre du cours LOG430. Elle permet de consulter, acheter, retourner des produits et synchroniser les inventaires locaux avec le centre logistique. La maison mère peut générer des rapports et consulter un tableau pour évoluer la performance des magasins. Ce laboratoire vise à familier les étudiants avec les outils nécessaires à la création d'un projet de haut niveau, tels que API Request, Grafana et Prometheus
+Ce projet est une application de gestion d'inventaire pour un réseau de magasins, dans le cadre du cours LOG430. Elle permet de consulter, acheter, retourner des produits et synchroniser les inventaires locaux avec le centre logistique. La maison mère peut générer des rapports et consulter un tableau pour évoluer la performance des magasins. Ce laboratoire vise à familier les étudiants avec les outils nécessaires à la création d'un projet de haut niveau, tels que API Request, Grafana et Prometheus.
+
+Pour les laboratoires 3 et 4, les métriques et Swagger ont été implémentés dans Centre Logistique, car au moment où je travaillais dessus, seul Centre Logistique disposait d’API Request.
+
+L'objectif de l'étape 2 est d'implémenter Swagger, des outils d’observation, d’appliquer l’architecture microservice et d’ajouter une API Gateway.
 
 # 2. Contraintes
 - Langage principal : Rust
@@ -25,7 +29,9 @@ Les fichiers sont organisés selon leur comportement ou rôle :
 - Les documents d’architecture et les diagrammes sont dans le dossier `docs/`
 - Les tests unitaires sont regroupés dans `tests/`
 - Les données initiales (seed) sont placées dans `seed/`
-  
+
+Après être arrivé au laboratoire 5, j’ai remarqué que c’était le magasin qu’il fallait améliorer et non centre logistique. Il était donc trop tard pour changer.
+
 # 4. Contexte
 
 ## Contexte fonctionnel
@@ -53,7 +59,7 @@ Les fichiers sont organisés selon leur comportement ou rôle :
 
 ![Deploiement](../images/deploiement.png)
 
-Le magasin en ligne et le magasin ont le même comportement. Cependant, le magasin en ligne est une application web, tandis que le magasin est une application CLI.
+Le magasin en ligne et le magasin ont le même comportement. Cependant, le magasin en ligne est une application web, tandis que le magasin est une application CLI. Ce système repose sur une architecture DDD, où chaque domaine constitue un monolithe organisé selon le modèle MVC.
 
 # 5. Scénarios d'utilisation
 
@@ -64,11 +70,13 @@ Le magasin en ligne et le magasin ont le même comportement. Cependant, le magas
 - UC5 – Déclencher un réapprovisionnement : Un employé du magasin peut envoyer une demande de réapprovisionnement.
 - UC6 – Générer un rapport de ventes : Un gestionnaire peut générer un rapport détaillé contenant des informations sur les magasins, les ventes et les inventaires.
 - UC7 – Visualiser les magasins dans un tableau de bord : Un gestionnaire peut consulter un tableau de bord pour avoir une vue d’ensemble de la situation des magasins.
+- UC8 - Visualiser les métriques du centre logistique : un gestionnaire peut consulter les métriques et tester les API requests avec Swagger.
+- UC9 - Visualiser les tableaux dans Grafana : un gestionnaire peut observer les performances de l'application.
 
-![Cas utilisation](../images/cas_utilisation.png)
+![Cas utilisation](../images/cas_utilisation_new.png)
 
 Un exemple du fonctionnement lorsque l'utilisateur achete un produit
-![diagramme sequence](../images/diagramme_sequence.png)
+![diagramme sequence](../images/diagramme_classe_magasin.png)
 
 # 6. Structure logique
 

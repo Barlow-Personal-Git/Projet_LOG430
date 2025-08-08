@@ -1,0 +1,10 @@
+@startuml
+actor Client
+participant "recherche_controller" as Recherche
+participant "produit" as Produit
+
+Client -> Recherche : recherche un produit par id
+Recherche -> Produit : find(id)
+Produit --> Recherche : retourne Produit
+Recherche --> Client : affiche résultat
+@enduml

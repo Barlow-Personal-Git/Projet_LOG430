@@ -1,0 +1,47 @@
+@startuml
+skinparam componentStyle rectangle
+
+package "Application de la console" {
+
+  package "Présentation" {
+    component "main.rs"
+  }
+
+  package "Logique métier" {
+      component "routes.rs"
+      component "inventaire_controller.rs"
+      component "produit_controller.rs"
+      component "transaction_controller.rs"
+      component "transaction_produit_controller.rs"
+  }
+
+  package "Persistance" {
+    component "Produit"
+    component "Magasin"
+    component "Inventaire"
+    component "Transaction"
+    component "TransactionProduit"
+  }
+
+  "main.rs" --> "routes.rs"
+  
+  "routes.rs" --> "inventaire_controller.rs"
+  "routes.rs" --> "produit_controller.rs"
+  "routes.rs" --> "transaction_controller.rs"
+  "routes.rs" --> "transaction_produit_controller.rs"
+
+  "inventaire_controller.rs" --> "Produit"
+  "inventaire_controller.rs" --> "Inventaire"
+  "inventaire_controller.rs" --> "Magasin"
+
+  "produit_controller.rs" --> "Produit"
+
+  "transaction_controller.rs" --> "Inventaire"
+  "transaction_controller.rs" --> "Magasin"
+
+  "transaction_produit_controller.rs" --> "TransactionProduit"
+  "transaction_produit_controller.rs" --> "Magasin"
+
+}
+
+@enduml

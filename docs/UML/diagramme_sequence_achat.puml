@@ -1,0 +1,10 @@
+@startuml
+actor Client
+participant "Menu_Achat"
+participant "Produit"
+
+Client -> Menu_Achat : ajouter_produit(id, quantite)
+Menu_Achat -> Produit : verifier_disponibilite(id, quantite)
+Produit --> Menu_Achat : disponible / indisponible
+Menu_Achat --> Client : confirmation
+@enduml

@@ -1,6 +1,6 @@
 @startuml
 actor "Client" as Client
-actor "Employeur" as Systeme
+actor "Employeur" as Employeur
 
 usecase "Rechercher un produit" as UC1
 usecase "Acheter un produit" as UC2
@@ -9,17 +9,21 @@ usecase "Consulter la liste des produits" as UC4
 usecase "Déclencher un réapprovisionnement" as UC5
 usecase "Générer un rapport de ventes" as UC6
 usecase "Visualiser les magasins dans un tableau de bord" as UC7
+usecase "Visualiser les métriques du centre logistique" as UC8
+usecase "Visualiser les tableaux dans Grafana" as UC9
 
 Client --> UC1
 Client --> UC2
 Client --> UC3
 Client --> UC4
 Client --> UC5
-Systeme --> UC1
-Systeme --> UC2
-Systeme --> UC3
-Systeme --> UC4
-Systeme --> UC5
-Systeme --> UC6
-Systeme --> UC7
+Employeur --> UC1
+Employeur --> UC2
+Employeur --> UC3
+Employeur --> UC4
+Employeur --> UC5
+Employeur --> UC6
+Employeur --> UC7
+Employeur --> UC8
+Employeur --> UC9
 @enduml

@@ -1,0 +1,64 @@
+@startuml
+package Models {
+  class Produit {}
+  class Client {}
+  class Inventaire {}
+  class Transaction {}
+  class TransactionProduit { }
+}
+
+package Controllers {
+  class achat_controller {}
+  class consulter_controller {}
+  class recherche_controller {}
+  class login_controller {}
+  class menu_controller {}
+  class retour_controller {}
+}
+
+package Views {
+  class achat_view {}
+  class consulter_view {}
+  class recherche_view {}
+  class menu_view {}
+  class retour_view {}
+  class login_view {}
+}
+
+package Mappers {
+  class TransactionProduitMapper {}
+}
+
+Inventaire "1" -- "*" Produit : possède
+Reapprovisionnement "1" -- "1..*" Produit : contient
+Magasin "1" -- "*" Transaction : contient
+Client "1" -- "*" Transaction : effectue
+Transaction "1" -- "1" TransactionProduit : contient
+TransactionProduit "*" -- "1" Produit : référence
+
+achat_controller --> Transaction : utilise
+achat_controller --> Inventaire : utilise
+achat_controller --> Produit : utilise
+achat_controller --> achat_view : contrôle l'affichage
+
+consulter_controller --> Produit : utilise
+consulter_controller --> Inventaire : utilise
+consulter_controller --> consulter_view : contrôle l'affichage
+
+recherche_controller --> Produit : utilise
+recherche_controller --> Inventaire : utilise
+recherche_controller --> recherche_view : contrôle l'affichage
+
+login_controller --> Client : utilise
+login_controller --> login_view : contrôle l'affichage
+
+menu_controller --> menu_view : contrôle l'affichage
+
+retour_controller --> Inventaire : utilise
+retour_controller --> Transaction : utilise
+retour_controller --> TransactionProduit : utilise
+retour_controller --> retour_view : contrôle l'affichage
+
+TransactionProduitMapper ..> TransactionProduit : mappe
+
+@enduml

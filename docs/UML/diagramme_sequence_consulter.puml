@@ -1,0 +1,14 @@
+@startuml
+actor Client
+participant "Menu_Consulter" as Menu
+participant "Inventaire"
+participant "Produit"
+
+Client -> Menu : consulter_liste_produit()
+Menu -> Inventaire : obtenir_inventaires()
+Inventaire --> Menu : liste inventaires
+Menu -> Produit : obtenir_produits()
+Produit --> Menu : liste produits
+Menu --> Client : afficher liste produits + inventaires
+
+@enduml

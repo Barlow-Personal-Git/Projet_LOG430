@@ -1,0 +1,43 @@
+@startuml
+
+package Models {
+  class Magasin
+  class Produit
+  class Inventaire
+  class Reapprovisionnement
+  class Transaction
+  class TransactionProduit
+}
+
+package Controllers {
+  class InventaireController
+  class ProduitController
+  class ReapprovisionnementController
+  class TransactionController
+  class TransactionProduitController
+}
+
+package Seeds {
+  class SeedInventaires
+  class SeedMagasins
+  class SeedProduits
+}
+Inventaire "*" -- "1" Magasin : contient
+Inventaire "1" -- "*" Produit : possède
+Reapprovisionnement "1" -- "1..*" Produit : contient
+Magasin "1" -- "*" TransactionProduit : contient
+Magasin "1" -- "*" Transaction : contient
+Transaction "1" -- "1" TransactionProduit : contient
+TransactionProduit "*" -- "1" Produit : référence
+
+ProduitController --> Produit : utilise
+InventaireController --> Inventaire : utilise
+ReapprovisionnementController --> Reapprovisionnement : utilise
+TransactionController --> Transaction : utilise
+TransactionProduitController --> TransactionProduit : utilise
+
+SeedInventaires --> Inventaire : utilise
+SeedMagasins --> Magasin : utilise
+SeedProduits --> Produit : utilise
+
+@enduml

@@ -36,7 +36,7 @@ package "Application de la console" {
 
   "produit_controller.rs" --> "Produit"
 
-  "transaction_controller.rs" --> "Inventaire"
+  "transaction_controller.rs" --> "Transaction"
   "transaction_controller.rs" --> "Magasin"
 
   "transaction_produit_controller.rs" --> "TransactionProduit"

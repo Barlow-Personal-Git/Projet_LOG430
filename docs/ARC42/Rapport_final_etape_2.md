@@ -80,11 +80,19 @@ Le magasin en ligne et le magasin ont le même comportement. Cependant, le magas
 
 ![Cas utilisation](../images/cas_utilisation_new.png)
 
-Un exemple du fonctionnement lorsque l'utilisateur achete un produit
-![diagramme sequence](../images/diagramme_classe_magasin.png)
+Trois exemples du fonctionnement lorsque l'utilisateur achete, consulte et recherche un produit.
+
+![diagramme sequence](../images/diagramme_sequence_achat.png)
+
+![diagramme sequence](../images/diagramme_sequence_consulter.png)
+
+![diagramme sequence](../images/diagramme_sequence_recherche.png)
 
 # 6. Structure logique
 
+Les modèles sont représentés comme illustré dans le diagramme de classes du centre logistique.
+
+![Diagramme de classe](../images/diagramme_class_centre_logistique.png)
 - `centre_logistique/` : Représente le lien entre les magasins et la maison mère.
   - `migration/` : Contient la création des tables.
   - `src/` : Contient le code source de l'application `centre_logistique`.
@@ -99,6 +107,11 @@ Un exemple du fonctionnement lorsque l'utilisateur achete un produit
     - `routes.rs` : Définition des routes de l'application.
     - `schema.rs` : Schéma de la base de données pour l'ORM.
   - `test_stress/` : Contient les tests de stress pour le centre logistique.
+
+
+Les modèles sont représentés comme illustré dans le diagramme de classes du magasin.
+
+![Diagramme de classe](../images/diagramme_classe_magasin.png)
 
 - `magasin/` : Contient le code pour le magasin CLI.
   - `migration/` : Contient la création des tables.
@@ -140,18 +153,6 @@ Un exemple du fonctionnement lorsque l'utilisateur achete un produit
     - `schema.rs` : Schéma de la base de données pour l'ORM.
   - `templates/` : Contient les fichier Tera/html
 
-![Diagramme de classe](../images/diagramme_class.png)
-
-Les modèles sont représentés comme illustré dans le diagramme de classes du magasin.
-
-
-
-
-
-
-
-
-
 # 7. Structure de développement
 
 - `docs/` : UML 4+1, ADR et rapport final
@@ -159,20 +160,12 @@ Les modèles sont représentés comme illustré dans le diagramme de classes du 
 - `github/` : workflows CI/CD
 - `migration/` : les scripts SQL de migration de base de données
   
-
-  ![Implementation](../images/implementation.png)
-
-
+Voici un aperçu de l’implémentation de mon centre logistique. Le fichier principal pour exécuter l’application est `main.rs`, qui appelle `routes.rs`, puis exécute les contrôleurs.
+  ![Implementation_centre_logistique](../images/implementation_centre_logistique.png)
 
 
-
-
-
-
-
-
-
-
+Voici un aperçu du implémentation du magasin, le fichier principal pour exécuter l’application est `main.rs`, qui appelle `login_controller` pour récupérer l’identité de l’utilisateur, puis exécute le reste du fonctionnement.
+  ![Implementation_centre_logistique](../images/implementation_magasin.png)
 
 # 8. Déploiement
 
@@ -186,7 +179,26 @@ Les modèles sont représentés comme illustré dans le diagramme de classes du 
   - Maison mère : `cargo run -p maison_mere`
 - Docker : `docker compose up`
 
-# 9. Crosscutting concepts
+# 9 Observabilité et résultats de monitoring
+
+Dans cette section, deux observations ont été réalisées sur la performance du centre_logistique, car lors du laboratoire 4, seul le centre_logistique disposait d’API REST.
+
+Sans load balacing
+  ![sans load balancing](../images/cl_part1.png)
+  ![sans load balancing](../images/cl_part2.png)
+
+Mes tests de stress n’étaient pas très poussés. Ce que j’ai remarqué, c’est que lorsque je n’applique pas de load balancing, à chaque exécution, on observe une augmentation du trafic, de l’utilisation de la mémoire et du CPU. J’ai également constaté que le système de cache fonctionne parfaitement, car les latences restent faibles.
+
+Avec load balancing sur deux instances
+  ![2_instances](../images/cl_2_part1.png)
+  ![2_instances](../images/cl_2_part2.png)
+
+Ce que je constate ici, c’est que les erreurs 500 se produisent lorsqu’il y a une surcharge d’utilisateurs.
+De plus, l’utilisation de la mémoire et du CPU augmente considérablement.
+Les latences sont élevées au début, car le cache n’est pas encore actif, mais une fois le cache en place, la latence reste relativement faible.
+
+
+# 10. Crosscutting concepts
 
 Dans l’application côté magasin, les entrées sont validées afin d’assurer l’intégrité des données saisies par l’utilisateur.
 Les utilisateurs sont classés selon deux rôles :
@@ -199,12 +211,7 @@ Pour la sécurité des entrées côté serveur n'est pas encore implémenté.
 
 L'application utilise `.env` pour faciliter la configuration du projet.
 
-
-
-
-
-
-# 10. Décisions d’architecture (ADR)
+# 11. Décisions d’architecture (ADR)
 
 ## Titre 1
 Choix de mécanisme de base de données (SQL vs NoSQL, local vs serveur)
@@ -312,19 +319,12 @@ J’ai choisi d’utiliser k6, car c’était l’un des deux outils de test de 
 Accepté
 
 ## Conséquences
-1. La mise en place des tests de charge sera plus rapide grâce à la simplicité de k6.
-2. L'intégration avec Grafana permettra de visualiser facilement les résultats de tests en temps réel.
-3. Les scripts de test sont facilent à implimenter car k6 utilise des fichiers JavaScript.
-4. Le test de stress sera limitée par la capacité de la version k6 installée.
+1. Mise en place plus rapide grâce à la simplicité de k6.
+2. Intégration avec Grafana, facilitant la visualisation des résultats en temps réel.
+3. Scripts de test faciles à écrire et à maintenir grâce à l’utilisation de JavaScript.
+4. Les capacités de test seront limitées par la configuration et la version de k6 utilisée.
 
-
-
-
-
-
-
-
-# 11. Qualité
+# 12. Qualité
 
 ## Maintenabilité
 - Le projet suit une architecture inspirée de MVC pour faciliter la maintenance.
@@ -333,24 +333,15 @@ Accepté
 ## Réutilisabilité
 - En utilisant le patron de conception Singleton pour le client permet d'assurer la limite de la duplication d'instance.
 
+## Performance
+- Les requêtes SQL sont optimisées via l'ORM Diesel pour limiter la surcharge sur la base de données.
 
+# 13. Risques
 
-
-
-
-
-
-# 12. Risques
-
-- Plusieurs risques sont présentes actuallement dans le projet : 
-- Je n'ai pas configuré l'application magasin en ligne avec des caches ni mis en place un meilleur système de protection contre les malwares pour empêcher un utilisateur de consulter les pages s'il n'est pas connecté.
-- Je n'ai pas effectué de tests unitaires.
-- Je n'ai pas réalisé de tests de stress de meilleur qualité pour évaluer la performance de l'application.
-- Je n'ai pas testé le programme sur un autre serveur comme celui fourni par le chargé de laboratoire.
-- Je n'ai pas optimisé la taille de l'image Docker.
-- J'ai fortement utilisé ChatGPT pour réaliser ce travail, mais plusieurs fichiers ont été faits par moi-même, avec l'aide de l'IA pour améliorer mon code.
-
-
-
-
-
+Plusieurs risques sont présentes actuallement dans le projet : 
+- L’application magasin en ligne n’a pas été configurée avec un système de cache et ne dispose pas d’un mécanisme de protection renforcé contre les malwares. Ainsi, un utilisateur non connecté pourrait accéder à certaines pages.
+- Aucun test unitaire n’a été réalisé.
+- La taille de l’image Docker est trop importante pour être exécutée correctement dans la VM fournie par les chargés de laboratoire.
+- L’architecture actuelle n’intègre pas de microservices.
+- La sécurité de l’application reste vulnérable, notamment car aucun mécanisme de chiffrement, de contrôle d’accès avancé ou de configuration CORS n’a été mis en place.
+- Une partie importante du code a été réalisée avec l’assistance de ChatGPT, mais plusieurs fichiers ont été développés par moi-même, avec l’aide de l’IA pour améliorer et optimiser certaines parties.

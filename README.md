@@ -155,49 +155,27 @@ Exemple pour tester :
  http://localhost:8002/centre-logistique/api/produits
 ```
 
+Exemple pour tester : 
+```
+ http://localhost:8002/centre-logistique/api/produits
+```
+Note : Ceci ne devrait être effectué qu’avec magasin_enligne et, s’il y en avait, avec les microservices, mais pas avec le centre-logistique. 
 
-# La structure de l'application
+## Swagger
 
-L’organisation de cette application suit une approche MVC (Modèle-Vue-Contrôleur), inspirée par des frameworks comme Laravel et ASP.NET MVC, adaptée à un contexte Python/Flask.
+Pour tester Swagger, il faut activer le mode debug en lançant le serveur avec `cargo run` dans le dossier `centre_logistique`.
 
-Arborescence et rôles des dossiers principaux
-`app/` : Contient l’ensemble des éléments backend liés à la logique métier et aux traitements :
-- `controllers/` : gestion des contrôleurs.
-- `models/` : définition des modèles de données et accès à la base.
-- `routes/` (à venir) : gestion des routes HTTP et API.
-- `api/` (à venir) : gestion des requêtes API externes ou internes.
+Exemple du route : 
+`http://localhost:8000/swagger`
 
-`docs/` : Documentation technique regroupant :
-- Diagrammes UML 4+1 (architecture logique, processus, déploiement…).
-- ADR (Architecture Decision Records) détaillant les choix techniques.
+## Prometheus
+URL d’accès à Prometheus :
+```
+http://localhost:9090
+```
 
-`github/` : Contient les workflows et fichiers de configuration pour l’intégration continue et le déploiement automatisé.
-
-`seed/` : Données initiales pour la base, permettant le peuplement automatique lors de l’installation ou du développement.
-
-`tests/` : Tests unitaires et fonctionnels assurant la qualité et la stabilité du code.
-
-`views/` : Partie Vue du MVC, destinée à l’affichage et à l’interaction utilisateur.
-Note : Pour l’instant, ce dossier contient principalement les fonctions d’entrée (input) et d’affichage (print).
-
-`main_server` : Dossier dédié au serveur mère. Sa structure actuelle est fonctionnelle, mais elle sera améliorée prochainement pour adopter une architecture MVC complète.
-
-## Point d'exécution
-`app.py` :Programme principal pour l’application magasin local.
-`main_server/server.py` : Programme principal pour le serveur mère, responsable de la base de données centrale et des rapports consolidés.
-
-# Choix des applications
-
-`Python` : Parmi tous les langages que j'ai utilisés au fil des années, Python est celui avec lequel j'ai le moins d'expérience, en excluant Rust. Étant donné que de nombreuses entreprises demandent aujourd’hui des compétences en Python, il est pertinent pour moi de me familiariser davantage avec ce langage à travers ce projet.
-
-`Console CLI` : Initialement, je prévoyais de créer une application web complète. Cependant, la ligne de commande (CLI) permet de simplifier la majorité des tâches.
-
-`Github` : Je suis plus familier avec GitHub qu’avec GitLab, tant pour le versionnage que pour l’intégration de workflows CI/CD.
-
-`pylint` : C'est un outil proposé pour l’analyse statique de code afin de maintenir un bon niveau de qualité, détecter les erreurs potentielles et appliquer un style de code..
-
-`pytest` : Un framework simple pour effectuer les tests unitaires.
-
-`SQLAlchemy` : C'est un ORM pour interagir avec la base de données.
-
-`PostgreSQL` : C’est une base de données relationnelle simple à utiliser et plus cohérente avec les besoins du projet qu’une base de données NoSQL.
+## Grafana
+URL d’accès à Grafana :
+```
+http://localhost:3000
+```

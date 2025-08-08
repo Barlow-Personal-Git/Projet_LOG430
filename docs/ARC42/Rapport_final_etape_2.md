@@ -13,9 +13,13 @@ L'objectif de l'étape 2 est d'implémenter Swagger, des outils d’observation,
 - Base de données : PostgreSQL
 - Interfaces : CLI (ligne de commande) pour le magasin et application Web pour la maison mère  et le magasin en ligne 
 - Framework web pour le serveur mère : Rocket
-- Test : `cargo test`
+- Test : `cargo test` PAS IMPLÉMENTER
 - Style : `cargo fmt`
 - Répertoire : Github
+- Observabilité : Prometheus pour la collecte de métrique et Grafana pour la visualisation des métriques
+- Load Balacing : nginx
+- Tests de stress : kk6
+- Api Gateway : Kong
 
 # 3. Principes architecturaux
 
@@ -45,6 +49,7 @@ Après être arrivé au laboratoire 5, j’ai remarqué que c’était le magasi
 - Le serveur côté centre_logistique peut :
   - Faire des appels API Request
   - Vérifier les Swaggers
+  - Vérifier les métriques
 
 - Le serveur côté maison mère peut :
   - Obtenir un rapport
@@ -139,6 +144,14 @@ Un exemple du fonctionnement lorsque l'utilisateur achete un produit
 
 Les modèles sont représentés comme illustré dans le diagramme de classes du magasin.
 
+
+
+
+
+
+
+
+
 # 7. Structure de développement
 
 - `docs/` : UML 4+1, ADR et rapport final
@@ -148,6 +161,18 @@ Les modèles sont représentés comme illustré dans le diagramme de classes du 
   
 
   ![Implementation](../images/implementation.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 8. Déploiement
 
@@ -173,6 +198,11 @@ Dans le coté centre logistique, il utilie `tracing` pour la journalisation. Lor
 Pour la sécurité des entrées côté serveur n'est pas encore implémenté. 
 
 L'application utilise `.env` pour faciliter la configuration du projet.
+
+
+
+
+
 
 # 10. Décisions d’architecture (ADR)
 
@@ -288,6 +318,12 @@ Accepté
 4. Le test de stress sera limitée par la capacité de la version k6 installée.
 
 
+
+
+
+
+
+
 # 11. Qualité
 
 ## Maintenabilité
@@ -296,6 +332,13 @@ Accepté
 
 ## Réutilisabilité
 - En utilisant le patron de conception Singleton pour le client permet d'assurer la limite de la duplication d'instance.
+
+
+
+
+
+
+
 
 # 12. Risques
 
@@ -306,3 +349,8 @@ Accepté
 - Je n'ai pas testé le programme sur un autre serveur comme celui fourni par le chargé de laboratoire.
 - Je n'ai pas optimisé la taille de l'image Docker.
 - J'ai fortement utilisé ChatGPT pour réaliser ce travail, mais plusieurs fichiers ont été faits par moi-même, avec l'aide de l'IA pour améliorer mon code.
+
+
+
+
+

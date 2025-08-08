@@ -2,16 +2,20 @@ Lien de mon repos : https://github.com/Barlow-Personal-Git/Projet_LOG430
 
 # 1. Introduction et objectifs
 
-Ce projet est une application de gestion d'inventaire pour un réseau de magasins, dans le cadre du cours LOG430. Elle permet de consulter, acheter, retourner des produits et synchroniser les inventaires locaux avec le centre logistique. La maison mère peut générer des rapports et consulter un tableau pour évoluer la performance des magasins. Ce laboratoire vise à familier les étudiants avec les outils nécessaires à la création d'un projet de haut niveau, tels que API Request, Grafana et Prometheus
+Ce projet est une application de gestion d'inventaire pour un réseau de magasins, dans le cadre du cours LOG430. Elle permet de consulter, acheter, retourner des produits et synchroniser les inventaires locaux avec le centre logistique. La maison mère peut générer des rapports et consulter un tableau pour évoluer la performance des magasins. Ce laboratoire vise à familier les étudiants avec les outils nécessaires à la création d'un projet de haut niveau, tels que API Request, Grafana et Prometheus.
 
 # 2. Contraintes
 - Langage principal : Rust
 - Base de données : PostgreSQL
 - Interfaces : CLI (ligne de commande) pour le magasin et application Web pour la maison mère  et le magasin en ligne 
 - Framework web pour le serveur mère : Rocket
-- Test : `cargo test`
+- Test : `cargo test` PAS IMPLÉMENTER
 - Style : `cargo fmt`
 - Répertoire : Github
+- Observabilité : Prometheus pour la collecte de métrique et Grafana pour la visualisation des métriques
+- Load Balacing : nginx
+- Tests de stress : kk6
+- Api Gateway : Kong
 
 # 3. Principes architecturaux
 
@@ -25,6 +29,8 @@ Les fichiers sont organisés selon leur comportement ou rôle :
 - Les documents d’architecture et les diagrammes sont dans le dossier `docs/`
 - Les tests unitaires sont regroupés dans `tests/`
 - Les données initiales (seed) sont placées dans `seed/`
+
+Pour le laboratoire 5, l’architecture de l’application magasin devait être modifiée pour adopter un modèle microservice. Cependant, cette migration vers l'architecture microservices n’a pas encore été effectuée.
   
 # 4. Contexte
 
@@ -39,6 +45,7 @@ Les fichiers sont organisés selon leur comportement ou rôle :
 - Le serveur côté centre_logistique peut :
   - Faire des appels API Request
   - Vérifier les Swaggers
+  - Vérifier les métriques
 
 - Le serveur côté maison mère peut :
   - Obtenir un rapport
@@ -55,6 +62,13 @@ Les fichiers sont organisés selon leur comportement ou rôle :
 
 Le magasin en ligne et le magasin ont le même comportement. Cependant, le magasin en ligne est une application web, tandis que le magasin est une application CLI.
 
+
+
+
+
+
+
+
 # 5. Scénarios d'utilisation
 
 - UC1 – Rechercher un produit : Un client peut consulter les produits par identifiant, catégorie ou nom.
@@ -69,6 +83,18 @@ Le magasin en ligne et le magasin ont le même comportement. Cependant, le magas
 
 Un exemple du fonctionnement lorsque l'utilisateur achete un produit
 ![diagramme sequence](../images/diagramme_sequence.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 6. Structure logique
 
@@ -131,6 +157,14 @@ Un exemple du fonctionnement lorsque l'utilisateur achete un produit
 
 Les modèles sont représentés comme illustré dans le diagramme de classes du magasin.
 
+
+
+
+
+
+
+
+
 # 7. Structure de développement
 
 - `docs/` : UML 4+1, ADR et rapport final
@@ -140,6 +174,18 @@ Les modèles sont représentés comme illustré dans le diagramme de classes du 
   
 
   ![Implementation](../images/implementation.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 8. Déploiement
 
@@ -165,6 +211,11 @@ Dans le coté centre logistique, il utilie `tracing` pour la journalisation. Lor
 Pour la sécurité des entrées côté serveur n'est pas encore implémenté. 
 
 L'application utilise `.env` pour faciliter la configuration du projet.
+
+
+
+
+
 
 # 10. Décisions d’architecture (ADR)
 
@@ -280,6 +331,12 @@ Accepté
 4. Le test de stress sera limitée par la capacité de la version k6 installée.
 
 
+
+
+
+
+
+
 # 11. Qualité
 
 ## Maintenabilité
@@ -288,6 +345,13 @@ Accepté
 
 ## Réutilisabilité
 - En utilisant le patron de conception Singleton pour le client permet d'assurer la limite de la duplication d'instance.
+
+
+
+
+
+
+
 
 # 12. Risques
 
@@ -298,3 +362,8 @@ Accepté
 - Je n'ai pas testé le programme sur un autre serveur comme celui fourni par le chargé de laboratoire.
 - Je n'ai pas optimisé la taille de l'image Docker.
 - J'ai fortement utilisé ChatGPT pour réaliser ce travail, mais plusieurs fichiers ont été faits par moi-même, avec l'aide de l'IA pour améliorer mon code.
+
+
+
+
+
